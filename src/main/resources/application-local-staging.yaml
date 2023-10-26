@@ -1,0 +1,22 @@
+fint:
+  org-id: fintlabs.no
+  kafka:
+    default-replicas: 1
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: ${fint.application-id}
+  kontroll:
+    opa:
+      url: http://localhost:8181/v1/data/accessmanagement
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://idp.felleskomponent.no/nidp/oauth/nam
+  kafka:
+    bootstrap-servers: localhost:9092
+
+server:
+  port: 8092
+

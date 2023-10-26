@@ -1,3 +1,14 @@
+fint:
+  application-id: fint-kontroll-resource-factory
+  cache:
+    defaultCacheEntryTimeToLiveMillis: 518400000
+    defaultCacheHeapSize: 1000000
+  integration:
+    service:
+      authorized-role: https://role-catalog.vigoiks.no/vigo/samtykke/user
+  kontroll:
+    opa:
+      url: http://fint-kontroll-opa:8181/v1/data/accessmanagement
 spring:
   security:
     oauth2:
