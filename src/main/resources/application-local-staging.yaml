@@ -1,10 +1,15 @@
 fint:
+  application-id: fint-kontroll-resource-factory
   org-id: fintlabs.no
   kafka:
+    application-id: fint-kontroll-resource-factory
     default-replicas: 1
     bootstrap-servers: localhost:9092
     consumer:
       group-id: ${fint.application-id}
+    topic:
+      org-id: ${fint.org-id}
+      domain-context: kontroll
   kontroll:
     opa:
       url: http://localhost:8181/v1/data/accessmanagement
@@ -19,4 +24,8 @@ spring:
 
 server:
   port: 8092
+
+logging:
+  level:
+    org.apache.kafka: INFO
 

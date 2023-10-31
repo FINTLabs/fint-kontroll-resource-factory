@@ -46,10 +46,13 @@ dependencies {
     testImplementation 'cglib:cglib-nodep:3.3.0'
 
     implementation 'org.springframework.kafka:spring-kafka'
-    //implementation 'no.fintlabs:fint-kafka:3.0.0-rc-1'
+    implementation 'no.fintlabs:fint-kafka:4.0.1'
     implementation 'no.fintlabs:fint-resource-server-security:1.1.0'
     implementation 'no.fintlabs:fint-kontroll-authorization:1.0.8'
     implementation 'jakarta.servlet:jakarta.servlet-api'
+    implementation 'no.fint:fint-relation-model:1.1.6'
+    implementation 'no.fint:fint-model-resource:0.4.1'
+    implementation 'no.fint:fint-felles-model-java:3.15.0'
 
 
 
