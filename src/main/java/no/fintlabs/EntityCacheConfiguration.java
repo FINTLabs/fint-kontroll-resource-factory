@@ -51,6 +51,12 @@ public class EntityCacheConfiguration {
         return createCache(PlattformResource.class);
     }
 
+    @Bean
+    FintCache<String, Integer> publishedApplicationResourceHashCache() {
+
+        return createCache(Integer.class);
+    }
+
 
     private <V> FintCache<String, V> createCache(Class<V> resourceClass) {
         return fintCacheManager.createCache(
