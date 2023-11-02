@@ -1,5 +1,4 @@
 package no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import no.fint.model.FintMainObject;

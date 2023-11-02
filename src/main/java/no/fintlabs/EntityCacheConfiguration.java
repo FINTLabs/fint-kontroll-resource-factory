@@ -2,6 +2,7 @@ package no.fintlabs;
 
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.cache.FintCacheManager;
+import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.ApplikasjonResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisenstilgangResource;
@@ -49,6 +50,11 @@ public class EntityCacheConfiguration {
     @Bean
     FintCache<String, PlattformResource> plattformResourceFintCache(){
         return createCache(PlattformResource.class);
+    }
+
+    @Bean
+    FintCache<String, OrganisasjonselementResource> organisasjonselementResourceCache() {
+        return createCache(OrganisasjonselementResource.class);
     }
 
     @Bean

@@ -1,8 +1,8 @@
 fint:
-  application-id: fint-kontroll-resource-factory
   org-id: fintlabs.no
+  client:
+    base-url: https://beta.felleskomponent.no
   kafka:
-    application-id: fint-kontroll-resource-factory
     default-replicas: 1
     bootstrap-servers: localhost:9092
     consumer:
@@ -11,8 +11,6 @@ fint:
       org-id: ${fint.org-id}
       domain-context: kontroll
   kontroll:
-    opa:
-      url: http://localhost:8181/v1/data/accessmanagement
 spring:
   security:
     oauth2:
@@ -21,11 +19,9 @@ spring:
           issuer-uri: https://idp.felleskomponent.no/nidp/oauth/nam
   kafka:
     bootstrap-servers: localhost:9092
-
 server:
   port: 8092
-
 logging:
   level:
-    org.apache.kafka: INFO
-
+    #no.fintlabs.user.UserPublishingComponent: DEBUG
+    no.fintlabs: INFO
