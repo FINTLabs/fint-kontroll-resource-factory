@@ -2,7 +2,10 @@ package no.fintlabs.applicationResource;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import no.fintlabs.Application;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocation;
+import no.fintlabs.fintResourceModels.eiendeler.applikasjon.Applikasjon;
+import no.fintlabs.fintResourceModels.eiendeler.applikasjon.Lisens;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
