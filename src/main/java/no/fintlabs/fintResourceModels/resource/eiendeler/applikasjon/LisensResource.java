@@ -34,8 +34,8 @@ public class LisensResource implements FintMainObject, FintLinks {
     }
 
     @JsonIgnore
-    public List<Link> getLisenstype(){return getLinks().getOrDefault("lisenstype", Collections.emptyList());}
-    public void addLisenstype(Link link){addLink("lisenstype",link);}
+    public List<Link> getLisensmodell(){return getLinks().getOrDefault("lisensmodell", Collections.emptyList());}
+    public void addLisensmodell(Link link){addLink("lisensmodell",link);}
 
     @JsonIgnore
     public List<Link> getTilgjengeligforbrukertype(){return getLinks().getOrDefault("tilgjengeligforbrukertype", Collections.emptyList());}

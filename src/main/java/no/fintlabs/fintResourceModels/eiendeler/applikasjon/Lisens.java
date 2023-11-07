@@ -15,7 +15,7 @@ import no.fint.model.felles.kompleksedatatyper.Identifikator;
 public class Lisens implements FintAbstractObject {
     public enum Relasjonsnavn {
         APPLIKASJON,
-        LISENSTYPE,
+        LISENSMODELL,
         TILGJENGELIGFORBRUKERTYPE,
         LISENSEIER,
         LISENSTILGANG

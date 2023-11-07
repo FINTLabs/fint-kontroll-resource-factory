@@ -22,6 +22,7 @@ public class ApplicationResource extends Resource {
     private String resourceOwnerOrgUnitName;
     private List<String> validForRoles= new ArrayList<>();
     private List<ApplicationResourceLocation> validForOrgUnits = new ArrayList<>();
+    private List<String> applicationCategory = new ArrayList<>();
 
 }
 

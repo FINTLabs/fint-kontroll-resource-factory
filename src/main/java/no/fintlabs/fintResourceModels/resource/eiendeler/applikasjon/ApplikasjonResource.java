@@ -23,6 +23,7 @@ public class ApplikasjonResource implements FintMainObject,FintLinks{
 
     private Identifikator systemid;
     private String applikasjonsnavn;
+    private String beskrivelse;
 
 
     // Relations

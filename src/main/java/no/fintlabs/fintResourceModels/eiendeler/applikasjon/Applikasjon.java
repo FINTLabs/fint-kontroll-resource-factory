@@ -20,4 +20,5 @@ public class Applikasjon implements FintAbstractObject {
     }
     private Identifikator systemid;
     private String applikasjonsnavn;
+    private String beskrivelse;
 }
