@@ -16,22 +16,21 @@ public class FintResourceOrgenhetService {
     }
 
     public String getOrgUnitName(Link link){
-        String orgUnitHref = link.getHref();
+        String orgUnitHref = link.getHref().toLowerCase();
 
         return organisasjonselementResourceFintCache
                 .getOptional(orgUnitHref)
-                .map(organisasjonselementResource -> organisasjonselementResource.getNavn())
+                .map(OrganisasjonselementResource::getNavn)
                 .orElse("");
     }
 
     public String getOrgUnitId(Link link){
-        String orgUnitHref = link.getHref();
+        String orgUnitHref = link.getHref().toLowerCase();
 
         return organisasjonselementResourceFintCache
                 .getOptional(orgUnitHref)
                 .map(organisasjonselementResource -> organisasjonselementResource.getOrganisasjonsId().getIdentifikatorverdi())
                 .orElse("");
     }
-
 
 }

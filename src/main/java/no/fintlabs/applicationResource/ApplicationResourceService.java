@@ -5,7 +5,6 @@ import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResou
 import no.fintlabs.fintResourceServices.*;
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.cache.FintCache;
-import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.ApplikasjonResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,34 +14,35 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class ApplicationResourceService {
-    private final FintCache<String, ApplikasjonResource> applikasjonResourceFintCache;
     private final FintCache<String, LisensResource> lisensResourceFintCache;
-    private final FintResourceOrgenhetService fintResourceOrgenhetService;
-
     private final FintResourceLisensService fintResourceLisensService;
     private final FintResourcePlattformService fintResourcePlattformService;
     private final FintResourceBrukertypeService fintResourceBrukertypeService;
     private final FintResourceLisensmodelService fintResourceLisensmodelService;
-    private final FintResourceLisenstilgangService fintResourceLisenstilgangService;
     private final ApplicationResourceLocationService applicationResourceLocationService;
+    private final ApplicationResourceEntityProducerService applicationResourceEntityProducerService;
 
-    public ApplicationResourceService(FintCache<String, ApplikasjonResource> applikasjonResourceFintCache, FintCache<String, LisensResource> lisensResourceFintCache, FintResourceOrgenhetService fintResourceOrgenhetService, FintResourceLisensService fintResourceLisensService, FintResourcePlattformService fintResourcePlattformService, FintResourceBrukertypeService fintResourceBrukertypeService, FintResourceLisensmodelService fintResourceLisensmodelService, FintResourceLisenstilgangService fintResourceLisenstilgangService, ApplicationResourceLocationService applicationResourceLocationService) {
-        this.applikasjonResourceFintCache = applikasjonResourceFintCache;
+    public ApplicationResourceService(FintCache<String, LisensResource> lisensResourceFintCache,
+                                      FintResourceLisensService fintResourceLisensService,
+                                      FintResourcePlattformService fintResourcePlattformService,
+                                      FintResourceBrukertypeService fintResourceBrukertypeService,
+                                      FintResourceLisensmodelService fintResourceLisensmodelService,
+                                      ApplicationResourceLocationService applicationResourceLocationService,
+                                      ApplicationResourceEntityProducerService applicationResourceEntityProducerService) {
         this.lisensResourceFintCache = lisensResourceFintCache;
-        this.fintResourceOrgenhetService = fintResourceOrgenhetService;
         this.fintResourceLisensService = fintResourceLisensService;
         this.fintResourcePlattformService = fintResourcePlattformService;
         this.fintResourceBrukertypeService = fintResourceBrukertypeService;
         this.fintResourceLisensmodelService = fintResourceLisensmodelService;
-        this.fintResourceLisenstilgangService = fintResourceLisenstilgangService;
         this.applicationResourceLocationService = applicationResourceLocationService;
+        this.applicationResourceEntityProducerService = applicationResourceEntityProducerService;
     }
 
     @Scheduled(
             initialDelayString = "${fint.kontroll.user.publishing.initial-delay}",
             fixedDelayString = "${fint.kontroll.user.publishing.fixed-delay}"
     )
-    public void toApplicationResourceFromFintObject(){
+    public void toApplicationResourceFromFintObject() {
         List<ApplicationResource> applicationResources = lisensResourceFintCache.getAllDistinct()
                 .stream()
                 .map(this::createApplicationResource)
@@ -50,26 +50,32 @@ public class ApplicationResourceService {
                 .map(Optional::get)
                 .toList();
 
-        log.info("ApplicationRespource object: " + applicationResources.toString());
+        List<ApplicationResource> applicationResourcesPublished = applicationResourceEntityProducerService
+                .publish(applicationResources);
+        log.info("ApplicationResources created/published to kafka: " + applicationResources.size() +"/" + applicationResourcesPublished.size());
+
 
     }
-
 
 
     private Optional<ApplicationResource> createApplicationResource(LisensResource lisensResource) {
 
         ApplicationResource applicationResource = new ApplicationResource();
+
         applicationResource.setResourceId(lisensResource.getSystemid().getIdentifikatorverdi());
+        applicationResource.setResourceName(lisensResource.getLisensnavn());
+        applicationResource.setResourceType("ApplicationResource");
         applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
         applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
         applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
         applicationResource.setValidForRoles(fintResourceBrukertypeService.getValidForRoles(lisensResource));
-
         applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
 
-
+        return Optional.of(applicationResource);
+    }
+}
 
 
 //                  ** Avventer **
@@ -77,12 +83,3 @@ public class ApplicationResourceService {
 //               -  applicationAccessRole("") Evt rolle til intern tilgang i app. Ref qlik. applicationAccesstype må være
 //                  "applikasjonsrolletilgang for at dette feltet er fylt ut"
 //               -  applicationCategory
-
-
-
-
-
-        return Optional.of(new ApplicationResource());
-    }
-
-}

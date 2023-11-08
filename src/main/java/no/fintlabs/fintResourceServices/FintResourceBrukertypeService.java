@@ -31,14 +31,9 @@ public class FintResourceBrukertypeService {
                 .map(Optional::get)
                 .toList();
 
-
-
-        List<String> validForRoles = brukertypeResources
+        return brukertypeResources
                 .stream()
                 .map(BrukertypeResource::getKode)
                 .toList();
-
-
-        return validForRoles;
     }
 }

@@ -29,8 +29,6 @@ public class ApplicationResourceLocationService {
                 .stream()
                 .map(link -> this.createApplicationResourceLocation(link, resourceid))
                 .toList();
-
-
     }
 
     private ApplicationResourceLocation createApplicationResourceLocation(Link link, String resourceid) {
@@ -38,10 +36,10 @@ public class ApplicationResourceLocationService {
                 .getOptional(link.getHref())
                 .orElse(new LisenstilgangResource());
 
-        Link orgUnitLink = lisenstilgangResource.getLisenskonsument().get(0);
+       Link orgUnitLink = lisenstilgangResource.getLisenskonsument().get(0);
 
-        String orgUnitName = fintResourceOrgenhetService.getOrgUnitName(link);
-        String orgUnitId = fintResourceOrgenhetService.getOrgUnitId(link);
+        String orgUnitName = fintResourceOrgenhetService.getOrgUnitName(orgUnitLink);
+        String orgUnitId = fintResourceOrgenhetService.getOrgUnitId(orgUnitLink);
 
 
         return ApplicationResourceLocation
@@ -54,12 +52,3 @@ public class ApplicationResourceLocationService {
     }
 }
 
-
-//
-//public class ApplicationResourceLocation {
-//    private Long id;
-//    private String resourceId;
-//    private String orgUnitId;
-//    private String orgUnitName;
-//    private Long resourceLimit;
-//}

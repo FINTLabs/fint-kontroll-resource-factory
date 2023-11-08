@@ -17,7 +17,8 @@ public class FintResourcePlattformService {
     private final FintCache<String, PlattformResource> plattformResourceFintCache;
     private final FintCache<String, ApplikasjonResource> applikasjonResourceFintCache;
 
-    public FintResourcePlattformService(FintCache<String, PlattformResource> plattformResourceFintCache, FintCache<String, ApplikasjonResource> applikasjonResourceFintCache) {
+    public FintResourcePlattformService(FintCache<String, PlattformResource> plattformResourceFintCache,
+                                        FintCache<String, ApplikasjonResource> applikasjonResourceFintCache) {
         this.plattformResourceFintCache = plattformResourceFintCache;
         this.applikasjonResourceFintCache = applikasjonResourceFintCache;
     }

@@ -9,38 +9,30 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class FintResourceLisensService {
-    private final FintCache<String, LisensResource> lisensResourceFintCache;
     private final FintCache<String, OrganisasjonselementResource> organisasjonselementResourcesFintCache;
 
     public FintResourceLisensService(
-            FintCache<String, LisensResource> lisensResourceFintCache,
             FintCache<String, OrganisasjonselementResource> organisasjonselementResourcesFintCache) {
-        this.lisensResourceFintCache = lisensResourceFintCache;
         this.organisasjonselementResourcesFintCache = organisasjonselementResourcesFintCache;
     }
 
-
-
     public String getResourceOwnerOrgUnitName(LisensResource lisensResource) {
-        String lisenseierHref = lisensResource.getLisenseier().get(0).getHref();
+        String lisenseierHref = lisensResource.getLisenseier().get(0).getHref().toLowerCase();
 
-        String lisensOwnerOrgUnitName = organisasjonselementResourcesFintCache
+        return organisasjonselementResourcesFintCache
                 .getOptional(lisenseierHref)
-                .map(orgUnit -> orgUnit.getNavn())
-                .orElse("");
-        return lisensOwnerOrgUnitName;
+                .map(OrganisasjonselementResource::getNavn)
+                .orElse(" ");
     }
 
     public String getResourceOwnerOrgUnitId(LisensResource lisensResource) {
-        String lisensEierHref = lisensResource.getLisenseier().get(0).getHref();
+        String lisensEierHref = lisensResource.getLisenseier().get(0).getHref().toLowerCase();
 
-        String lisensOwnerOrgunitId = organisasjonselementResourcesFintCache
+        return organisasjonselementResourcesFintCache
                 .getOptional(lisensEierHref)
                 .map(orgunit -> orgunit.getOrganisasjonsId().getIdentifikatorverdi())
-                .orElse("");
-        return lisensOwnerOrgunitId;
+                .orElse("ingen owner funnet ");
     }
-
 
     public Long getResourceLimit(LisensResource lisensResource) {
         return (long) lisensResource.getLisensantall();

@@ -1,5 +1,6 @@
 package no.fintlabs;
 
+import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.FintLinks;
 import no.fintlabs.applicationResource.ApplicationResource;
 import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementResource;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
 @Configuration
+@Slf4j
 public class EntityConsumerConfiguration {
     private final EntityConsumerFactoryService entityConsumerFactoryService;
 
@@ -26,11 +28,11 @@ public class EntityConsumerConfiguration {
     }
 
     private <T extends FintLinks> ConcurrentMessageListenerContainer<String, T> createCacheConsumer(
-            String resourceReference, Class<T> resourceClass, FintCache<String, T> cache ) {
-        return entityConsumerFactoryService.createRecordConsumerFactory(
+            String resourceReference, Class<T> resourceClass, FintCache<String, T> cache) {
+        return entityConsumerFactoryService.createFactory(
                 resourceClass,
                 consumerRecord -> cache.put(
-                        ResourceLinkUtil.getSelfLinks(consumerRecord .value()),
+                        ResourceLinkUtil.getSelfLinks(consumerRecord.value()),
                         consumerRecord.value()
                 )
         ).createContainer(EntityTopicNameParameters.builder().resource(resourceReference).build());
@@ -38,7 +40,7 @@ public class EntityConsumerConfiguration {
 
     @Bean
     ConcurrentMessageListenerContainer<String, LisensResource> lisensResourceConcurrentMessageListenerContainer(
-            FintCache<String, LisensResource> lisensResourceFintCache ) {
+            FintCache<String, LisensResource> lisensResourceFintCache) {
         return createCacheConsumer(
                 "eiendeler.applikasjon.lisens",
                 LisensResource.class,
@@ -48,7 +50,7 @@ public class EntityConsumerConfiguration {
 
     @Bean
     ConcurrentMessageListenerContainer<String, LisenstilgangResource> lisenstilgangResourceConcurrentMessageListenerContainer(
-            FintCache<String,LisenstilgangResource> lisenstilgangResourceFintCache ){
+            FintCache<String, LisenstilgangResource> lisenstilgangResourceFintCache) {
         return createCacheConsumer(
                 "eiendeler.applikasjon.lisenstilgang",
                 LisenstilgangResource.class,
@@ -58,7 +60,7 @@ public class EntityConsumerConfiguration {
 
     @Bean
     ConcurrentMessageListenerContainer<String, ApplikasjonResource> applikasjonResourceConcurrentMessageListenerContainer(
-            FintCache<String,ApplikasjonResource> applikasjonResourceFintCache ) {
+            FintCache<String, ApplikasjonResource> applikasjonResourceFintCache) {
         return createCacheConsumer(
                 "eiendeler.applikasjon.applikasjon",
                 ApplikasjonResource.class,
@@ -68,7 +70,7 @@ public class EntityConsumerConfiguration {
 
     @Bean
     ConcurrentMessageListenerContainer<String, OrganisasjonselementResource> organisasjonselementResourceEntityConsumer(
-            FintCache<String, OrganisasjonselementResource> organisasjonselementResourceCache ) {
+            FintCache<String, OrganisasjonselementResource> organisasjonselementResourceCache) {
         return createCacheConsumer(
                 "administrasjon.organisasjon.organisasjonselement",
                 OrganisasjonselementResource.class,
@@ -77,10 +79,9 @@ public class EntityConsumerConfiguration {
     }
 
 
-
     @Bean
     ConcurrentMessageListenerContainer<String, BrukertypeResource> brukertypeResourceConcurrentMessageListenerContainer(
-            FintCache<String, BrukertypeResource> brukertypeResourceFintCache ) {
+            FintCache<String, BrukertypeResource> brukertypeResourceFintCache) {
         return createCacheConsumer(
                 "eiendeler.kodeverk.brukertype",
                 BrukertypeResource.class,
@@ -90,7 +91,7 @@ public class EntityConsumerConfiguration {
 
     @Bean
     ConcurrentMessageListenerContainer<String, LisensmodellResource> lisensmodellResourceConcurrentMessageListenerContainer(
-            FintCache<String, LisensmodellResource> lisensmodellResourceFintCache ) {
+            FintCache<String, LisensmodellResource> lisensmodellResourceFintCache) {
         return createCacheConsumer(
                 "eiendeler.kodeverk.lisensmodell",
                 LisensmodellResource.class,
@@ -100,7 +101,7 @@ public class EntityConsumerConfiguration {
 
     @Bean
     ConcurrentMessageListenerContainer<String, PlattformResource> plattformResourceConcurrentMessageListenerContainer(
-            FintCache<String, PlattformResource> plattformResourceFintCache ) {
+            FintCache<String, PlattformResource> plattformResourceFintCache) {
         return createCacheConsumer(
                 "eiendeler.kodeverk.plattform",
                 PlattformResource.class,
@@ -110,16 +111,16 @@ public class EntityConsumerConfiguration {
 
     @Bean
     ConcurrentMessageListenerContainer<String, ApplicationResource> applicationResourceEntityConsumer(
-            FintCache<String, Integer> publishedApplicationResourceHashCache ) {
-        ConcurrentMessageListenerContainer<String, ApplicationResource> applicationresourceConcurentMessageListenerContainer =
-                entityConsumerFactoryService.createRecordConsumerFactory(
-                ApplicationResource.class,
-                consumerRecord -> publishedApplicationResourceHashCache.put(
-                        consumerRecord.value().getResourceId(),
-                        consumerRecord.value().hashCode()
-                )
-        ).createContainer(EntityTopicNameParameters.builder().resource("applicationresource").build());
+            FintCache<String, Integer> publishedApplicationResourceHashCache) {
 
-        return applicationresourceConcurentMessageListenerContainer;
+
+        return entityConsumerFactoryService.createFactory(
+                ApplicationResource.class,
+                consumerRecord ->
+                        publishedApplicationResourceHashCache.put(
+                                consumerRecord.value().getResourceId(),
+                                consumerRecord.value().hashCode()
+                        )
+        ).createContainer(EntityTopicNameParameters.builder().resource("applicationresource").build());
     }
 }

@@ -7,9 +7,6 @@ import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResou
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.LisensmodellResource;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -24,14 +21,9 @@ public class FintResourceLisensmodelService {
 
         Link lisensModellLink = lisensResource.getLisensmodell().get(0);
 
-
-
         return lisensmodellResourceFintCache
                 .getOptional(lisensModellLink.getHref())
-                .map(lisensmodellResource -> lisensmodellResource.getKode())
+                .map(LisensmodellResource::getKode)
                 .orElse("");
-
-
-
     }
 }
