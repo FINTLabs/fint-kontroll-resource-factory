@@ -17,7 +17,7 @@ public class Lisensmodell extends Begrep implements FintMainObject {
         LISENSMODELL
     }
 
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String kode;
     private String navn;
 }

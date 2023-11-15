@@ -16,7 +16,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @ToString
 public class LisensResource implements FintMainObject, FintLinks {
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String lisensnavn;
     private int lisensantall;
     private String beskrivelse;

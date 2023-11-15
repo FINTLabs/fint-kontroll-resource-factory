@@ -10,6 +10,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
+
 public class ResourceLinkUtil {
 
     public static String getFirstSelfLink(FintLinks resource) {
@@ -49,5 +51,16 @@ public class ResourceLinkUtil {
     public static String systemIdToLowerCase(String path) {
         return path.replace("systemId", "systemid");
     }
+    public static String identifikatorNameToLowerCase(String path) {
+        String lowerCasePathWithoutValue = path.substring(0, path.lastIndexOf('/')).toLowerCase();
+        String value = path.substring(path.lastIndexOf('/'));
+        return lowerCasePathWithoutValue + value;
+    }
+    public static String getIdentifikatorValueFromPath (String path) {
+        return path.substring(path.lastIndexOf('/')+1);
+    }
+
+
+
 
 }

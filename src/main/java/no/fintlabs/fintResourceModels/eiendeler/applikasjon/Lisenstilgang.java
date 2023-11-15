@@ -16,6 +16,6 @@ public class Lisenstilgang implements FintAbstractObject {
         LISENSKONSUMENT,
         LISENS,
     }
-    private Identifikator systemid;
+    private Identifikator systemId;
     private int lisensantall;
 }

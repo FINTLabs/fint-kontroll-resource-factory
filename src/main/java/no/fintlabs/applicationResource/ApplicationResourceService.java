@@ -19,6 +19,7 @@ public class ApplicationResourceService {
     private final FintResourcePlattformService fintResourcePlattformService;
     private final FintResourceBrukertypeService fintResourceBrukertypeService;
     private final FintResourceLisensmodelService fintResourceLisensmodelService;
+    private final FintResourceApplikasjonsKategoriService fintResourceApplikasjonsKategoriService;
     private final ApplicationResourceLocationService applicationResourceLocationService;
     private final ApplicationResourceEntityProducerService applicationResourceEntityProducerService;
 
@@ -28,7 +29,8 @@ public class ApplicationResourceService {
                                       FintResourceBrukertypeService fintResourceBrukertypeService,
                                       FintResourceLisensmodelService fintResourceLisensmodelService,
                                       ApplicationResourceLocationService applicationResourceLocationService,
-                                      ApplicationResourceEntityProducerService applicationResourceEntityProducerService) {
+                                      ApplicationResourceEntityProducerService applicationResourceEntityProducerService,
+                                      FintResourceApplikasjonsKategoriService fintResourceApplikasjonsKategoriService) {
         this.lisensResourceFintCache = lisensResourceFintCache;
         this.fintResourceLisensService = fintResourceLisensService;
         this.fintResourcePlattformService = fintResourcePlattformService;
@@ -36,6 +38,7 @@ public class ApplicationResourceService {
         this.fintResourceLisensmodelService = fintResourceLisensmodelService;
         this.applicationResourceLocationService = applicationResourceLocationService;
         this.applicationResourceEntityProducerService = applicationResourceEntityProducerService;
+        this.fintResourceApplikasjonsKategoriService = fintResourceApplikasjonsKategoriService;
     }
 
     @Scheduled(
@@ -45,16 +48,17 @@ public class ApplicationResourceService {
     public void toApplicationResourceFromFintObject() {
         List<ApplicationResource> applicationResources = lisensResourceFintCache.getAllDistinct()
                 .stream()
+                .filter(lisensResource -> !lisensResource.getLisenstilgang().isEmpty())
+                .filter(lisensResource -> !lisensResource.getApplikasjon().isEmpty())
                 .map(this::createApplicationResource)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .filter(applicationResource -> ! applicationResource.getApplicationCategory().contains("Pedagogisk verktøy"))
                 .toList();
 
         List<ApplicationResource> applicationResourcesPublished = applicationResourceEntityProducerService
                 .publish(applicationResources);
         log.info("ApplicationResources created/published to kafka: " + applicationResources.size() +"/" + applicationResourcesPublished.size());
-
-
     }
 
 
@@ -62,17 +66,17 @@ public class ApplicationResourceService {
 
         ApplicationResource applicationResource = new ApplicationResource();
 
-        applicationResource.setResourceId(lisensResource.getSystemid().getIdentifikatorverdi());
+        applicationResource.setResourceId(lisensResource.getSystemId().getIdentifikatorverdi());
         applicationResource.setResourceName(lisensResource.getLisensnavn());
         applicationResource.setResourceType("ApplicationResource");
-        applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
-        applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
+        //applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
+        //applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
         applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
         applicationResource.setValidForRoles(fintResourceBrukertypeService.getValidForRoles(lisensResource));
         applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
-
+        applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
         return Optional.of(applicationResource);
     }
 }

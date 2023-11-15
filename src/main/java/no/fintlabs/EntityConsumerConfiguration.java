@@ -8,6 +8,7 @@ import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.ApplikasjonResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisenstilgangResource;
+import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.ApplikasjonskategoriResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.BrukertypeResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.LisensmodellResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.PlattformResource;
@@ -106,6 +107,15 @@ public class EntityConsumerConfiguration {
                 "eiendeler.kodeverk.plattform",
                 PlattformResource.class,
                 plattformResourceFintCache
+        );
+    }
+    @Bean
+    ConcurrentMessageListenerContainer<String, ApplikasjonskategoriResource> applikasjonskategoriResourceConcurrentMessageListenerContainer(
+            FintCache<String, ApplikasjonskategoriResource> applikasjonskategoriformResourceFintCache) {
+        return createCacheConsumer(
+                "eiendeler.kodeverk.applikasjonskategori",
+                ApplikasjonskategoriResource.class,
+                applikasjonskategoriformResourceFintCache
         );
     }
 

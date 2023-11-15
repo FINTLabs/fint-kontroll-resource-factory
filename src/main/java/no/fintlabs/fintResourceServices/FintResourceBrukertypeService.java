@@ -7,6 +7,7 @@ import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResou
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.BrukertypeResource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,18 +22,18 @@ public class FintResourceBrukertypeService {
 
     public List<String> getValidForRoles(LisensResource lisensResource) {
 
-        List<Link> tilgjengeligforbrukertypeLinks = lisensResource.getTilgjengeligforbrukertype();
+        if (lisensResource.getTilgjengeligforbrukertype().isEmpty()) {
+            List<String> list = new ArrayList<>();
+            list.add("Brukertype ikke satt");
+            return list;
+        }
 
-        List<BrukertypeResource> brukertypeResources = tilgjengeligforbrukertypeLinks
+        return lisensResource.getTilgjengeligforbrukertype()
                 .stream()
                 .map(Link::getHref)
                 .map(brukertypeResourceFintCache::getOptional)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .toList();
-
-        return brukertypeResources
-                .stream()
                 .map(BrukertypeResource::getKode)
                 .toList();
     }

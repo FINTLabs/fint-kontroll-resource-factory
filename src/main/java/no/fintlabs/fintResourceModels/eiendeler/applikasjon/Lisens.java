@@ -20,7 +20,7 @@ public class Lisens implements FintAbstractObject {
         LISENSEIER,
         LISENSTILGANG
     }
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String lisensnavn;
     private int lisensantall;
     private String beskrivelse;

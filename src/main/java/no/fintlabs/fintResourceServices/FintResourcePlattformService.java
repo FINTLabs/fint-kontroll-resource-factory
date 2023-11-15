@@ -8,6 +8,7 @@ import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResou
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.PlattformResource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +25,23 @@ public class FintResourcePlattformService {
     }
 
     public List<String> getPlatform(LisensResource lisensResource) {
-        String applikasjonResourceHref = lisensResource.getApplikasjon().get(0).getHref();
 
-        return applikasjonResourceFintCache.get(applikasjonResourceHref).getStottetplattform()
+        String applikasjonResourceHref = lisensResource.getApplikasjon().get(0).getHref().toLowerCase();
+        Optional<ApplikasjonResource> optionalApplikasjonResource = applikasjonResourceFintCache.getOptional(applikasjonResourceHref);
+
+        if (optionalApplikasjonResource.isEmpty()) {
+            List<String> list = new ArrayList<String>();
+            list.add("Lisens ikke tilknyttet applikasjon");
+            return list;
+        }
+        ApplikasjonResource applikasjonResource = optionalApplikasjonResource.get();
+
+        if (applikasjonResource.getStottetplattform().isEmpty()) {
+            List<String> list = new ArrayList<>();
+            list.add("Plattform ikke satt");
+            return list;
+        }
+        return applikasjonResource.getStottetplattform()
                 .stream()
                 .map(Link::getHref)
                 .map(plattformResourceFintCache::getOptional)

@@ -17,7 +17,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class BrukertypeResource extends Begrep implements FintMainObject, FintLinks {
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String kode;
     private String navn;
 

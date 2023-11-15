@@ -1,5 +1,5 @@
 fint:
-  org-id: ''
+  org-id: ofk.no
   application-id: fint-kontroll-resource-factory
   cache:
     defaultCacheEntryTimeToLiveMillis: 518400000

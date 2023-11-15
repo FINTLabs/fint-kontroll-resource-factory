@@ -9,6 +9,9 @@ import no.fintlabs.fintResourceServices.FintResourceOrgenhetService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
+import static no.fintlabs.links.ResourceLinkUtil.identifikatorNameToLowerCase;
 
 @Service
 @Slf4j
@@ -23,7 +26,7 @@ public class ApplicationResourceLocationService {
 
     public List<ApplicationResourceLocation> getValidForOrgunits(LisensResource lisensResource) {
         List<Link> lisenstilgangLinker = lisensResource.getLisenstilgang();
-        String resourceid = lisensResource.getSystemid().getIdentifikatorverdi();
+        String resourceid = lisensResource.getSystemId().getIdentifikatorverdi();
 
         return lisenstilgangLinker
                 .stream()
@@ -32,23 +35,27 @@ public class ApplicationResourceLocationService {
     }
 
     private ApplicationResourceLocation createApplicationResourceLocation(Link link, String resourceid) {
-        LisenstilgangResource lisenstilgangResource = lisenstilgangResourceFintCache
-                .getOptional(link.getHref())
-                .orElse(new LisenstilgangResource());
+        Optional<LisenstilgangResource> optionalLisenstilgangResource = lisenstilgangResourceFintCache
+                .getOptional(identifikatorNameToLowerCase(link.getHref()));
 
-       Link orgUnitLink = lisenstilgangResource.getLisenskonsument().get(0);
+        if (!optionalLisenstilgangResource.isEmpty()) {
 
-        String orgUnitName = fintResourceOrgenhetService.getOrgUnitName(orgUnitLink);
-        String orgUnitId = fintResourceOrgenhetService.getOrgUnitId(orgUnitLink);
+            LisenstilgangResource lisenstilgangResource = optionalLisenstilgangResource.get();
+            Link orgUnitLink = lisenstilgangResource.getLisenskonsument().get(0);
+            String orgUnitName = fintResourceOrgenhetService.getOrgUnitName(orgUnitLink);
+            String orgUnitId = fintResourceOrgenhetService.getOrgUnitId(orgUnitLink);
 
-
-        return ApplicationResourceLocation
-                .builder()
-                .resourceId(resourceid)
-                .orgUnitId(orgUnitId)
-                .orgUnitName(orgUnitName)
-                .resourceLimit((long) lisenstilgangResource.getLisensantall())
-                .build();
+            return ApplicationResourceLocation
+                    .builder()
+                    .resourceId(resourceid)
+                    .orgUnitId(orgUnitId)
+                    .orgUnitName(orgUnitName)
+                    .resourceLimit((long) lisenstilgangResource.getLisensantall())
+                    .build();
+        } else {
+            log.info("Lisenstilgangsressurs " + link.getHref().toLowerCase() + " not found");
+            return new ApplicationResourceLocation();
+        }
     }
 }
 

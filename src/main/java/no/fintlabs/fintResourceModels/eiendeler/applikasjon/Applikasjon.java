@@ -18,7 +18,7 @@ public class Applikasjon implements FintAbstractObject {
         APPLIKASJONSKATEGORI,
         STOTTETPLATTFORM
     }
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String applikasjonsnavn;
     private String beskrivelse;
 }

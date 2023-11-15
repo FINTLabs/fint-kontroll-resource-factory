@@ -1,7 +1,7 @@
 fint:
-  org-id: fintlabs.no
+  org-id: ofk.no
   client:
-    base-url: https://beta.felleskomponent.no
+    base-url: https://api.felleskomponent.no
   kafka:
     default-replicas: 1
     bootstrap-servers: localhost:9092

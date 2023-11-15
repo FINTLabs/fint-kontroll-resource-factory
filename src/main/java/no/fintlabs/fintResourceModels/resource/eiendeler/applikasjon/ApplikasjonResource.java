@@ -21,7 +21,7 @@ import java.util.Map;
 @ToString
 public class ApplikasjonResource implements FintMainObject,FintLinks{
 
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String applikasjonsnavn;
     private String beskrivelse;
 

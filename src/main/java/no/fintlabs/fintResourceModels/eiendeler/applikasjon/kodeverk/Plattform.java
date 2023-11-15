@@ -17,7 +17,7 @@ public class Plattform extends Begrep implements FintMainObject {
         STOTTETPLATFORM
     }
 
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String kode;
     private String navn;
 }

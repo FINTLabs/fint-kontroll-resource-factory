@@ -18,7 +18,7 @@ public class Brukertype  extends Begrep implements FintMainObject {
         TILGJENGELIGFORBRUKERTYPE
     }
 
-    private Identifikator systemid;
+    private Identifikator systemId;
     private String kode;
     private String navn;
 }

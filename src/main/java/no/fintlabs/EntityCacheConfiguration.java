@@ -6,6 +6,7 @@ import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementRe
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.ApplikasjonResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisenstilgangResource;
+import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.ApplikasjonskategoriResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.BrukertypeResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.LisensmodellResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.PlattformResource;
@@ -21,7 +22,6 @@ public class EntityCacheConfiguration {
     public EntityCacheConfiguration(FintCacheManager fintCacheManager) {
         this.fintCacheManager = fintCacheManager;
     }
-
     @Bean
     FintCache<String, ApplikasjonResource> applikasjonResourceFintCache(){
         return createCache(ApplikasjonResource.class);
@@ -51,7 +51,10 @@ public class EntityCacheConfiguration {
     FintCache<String, PlattformResource> plattformResourceFintCache(){
         return createCache(PlattformResource.class);
     }
-
+    @Bean
+    FintCache<String, ApplikasjonskategoriResource> applikasjonskategoriformResourceFintCache(){
+        return createCache(ApplikasjonskategoriResource.class);
+    }
     @Bean
     FintCache<String, OrganisasjonselementResource> organisasjonselementResourceCache() {
         return createCache(OrganisasjonselementResource.class);

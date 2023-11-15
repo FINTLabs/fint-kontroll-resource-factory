@@ -6,6 +6,8 @@ import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementRe
 import no.fintlabs.cache.FintCache;
 import org.springframework.stereotype.Service;
 
+import static no.fintlabs.links.ResourceLinkUtil.identifikatorNameToLowerCase;
+
 @Service
 @Slf4j
 public class FintResourceOrgenhetService {
@@ -16,7 +18,7 @@ public class FintResourceOrgenhetService {
     }
 
     public String getOrgUnitName(Link link){
-        String orgUnitHref = link.getHref().toLowerCase();
+        String orgUnitHref = identifikatorNameToLowerCase(link.getHref());
 
         return organisasjonselementResourceFintCache
                 .getOptional(orgUnitHref)
@@ -25,7 +27,7 @@ public class FintResourceOrgenhetService {
     }
 
     public String getOrgUnitId(Link link){
-        String orgUnitHref = link.getHref().toLowerCase();
+        String orgUnitHref = identifikatorNameToLowerCase(link.getHref());
 
         return organisasjonselementResourceFintCache
                 .getOptional(orgUnitHref)

@@ -16,7 +16,7 @@ import java.util.Map;
 @ToString
 public class LisenstilgangResource implements FintMainObject, FintLinks {
 
-    private Identifikator systemid;
+    private Identifikator systemId;
     private int lisensantall;
 
 

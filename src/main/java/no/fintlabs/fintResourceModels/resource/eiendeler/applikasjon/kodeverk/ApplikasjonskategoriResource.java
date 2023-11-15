@@ -16,7 +16,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString
-public class LisensmodellResource extends Begrep implements FintMainObject, FintLinks {
+public class ApplikasjonskategoriResource extends Begrep implements FintMainObject, FintLinks {
     private Identifikator systemId;
     private String kode;
     private String navn;
@@ -26,12 +26,12 @@ public class LisensmodellResource extends Begrep implements FintMainObject, Fint
     private final Map<String, List<Link>> links = createLinks();
 
     @JsonIgnore
-    public List<Link> getLisensmodell() {
-        return getLinks().getOrDefault("lisensmodell", Collections.emptyList());
+    public List<Link> getApplikasjonskategori() {
+        return getLinks().getOrDefault("applikasjonskategori", Collections.emptyList());
     }
-    public void addLisensmodell(Link link) {
-        addLink("lisensmodell", link);
-    }
+    public void addApplikasjonskategori(Link link) {
 
+        addLink("applikasjonskategori", link);
+    }
 
 }
