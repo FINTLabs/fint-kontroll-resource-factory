@@ -14,3 +14,6 @@ spec:
         permission: read
       - topic: 'fintlabs-no.kontroll.*'
         permission: admin
+    env:
+      - name: spring.kafka.consumer.group-id
+        value: 'fint-kontroll-resource-factory'
