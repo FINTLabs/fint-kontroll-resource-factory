@@ -7,6 +7,7 @@ import lombok.ToString;
 import no.fint.model.FintAbstractObject;
 import no.fint.model.FintMainObject;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Periode;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +22,5 @@ public class Applikasjon implements FintAbstractObject {
     private Identifikator systemId;
     private String applikasjonsnavn;
     private String beskrivelse;
+    private Periode gyldighetsperiode;
 }

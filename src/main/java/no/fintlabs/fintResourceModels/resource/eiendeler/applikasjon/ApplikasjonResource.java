@@ -3,6 +3,7 @@ package no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import no.fint.model.felles.kompleksedatatyper.Periode;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.Link;
 import no.fint.model.FintMainObject;
@@ -24,6 +25,7 @@ public class ApplikasjonResource implements FintMainObject,FintLinks{
     private Identifikator systemId;
     private String applikasjonsnavn;
     private String beskrivelse;
+    private Periode gyldighetsperiode;
 
 
     // Relations

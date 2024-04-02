@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import no.fint.model.FintMainObject;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Periode;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.Link;
 
@@ -18,6 +19,7 @@ public class LisenstilgangResource implements FintMainObject, FintLinks {
 
     private Identifikator systemId;
     private int lisensantall;
+    private Periode gyldighetsperiode;
 
 
 

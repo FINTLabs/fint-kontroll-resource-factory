@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import no.fint.model.FintAbstractObject;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Periode;
 
 @Data
 @NoArgsConstructor
@@ -18,4 +19,5 @@ public class Lisenstilgang implements FintAbstractObject {
     }
     private Identifikator systemId;
     private int lisensantall;
+    private Periode gyldighetsperiode;
 }
