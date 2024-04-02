@@ -7,6 +7,7 @@ import lombok.ToString;
 import no.fint.model.FintAbstractObject;
 import no.fint.model.FintMainObject;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Periode;
 
 @Data
 @NoArgsConstructor
@@ -23,5 +24,8 @@ public class Lisens implements FintAbstractObject {
     private Identifikator systemId;
     private String lisensnavn;
     private int lisensantall;
+    private int enhetskostnad;
     private String beskrivelse;
+    private Periode gyldighetsperiode;
+
 }
