@@ -4,6 +4,7 @@ import lombok.*;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocation;
 import no.fintlabs.resource.Resource;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -23,6 +24,11 @@ public class ApplicationResource extends Resource {
     private List<String> validForRoles;
     private List<ApplicationResourceLocation> validForOrgUnits;
     private List<String> applicationCategory;
+    private String licenseEnforcement;
+    private boolean hasCost;
+    private Long unitCost;
+    private String status;
+    private Date statusChanged;
 
 }
 
