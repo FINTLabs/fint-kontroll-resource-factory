@@ -15,4 +15,5 @@ public abstract class Resource {
     protected String resourceName;
     protected String resourceType;
     protected UUID identityProviderGroupObjectId;
+    protected String identityProviderGroupName;
 }
