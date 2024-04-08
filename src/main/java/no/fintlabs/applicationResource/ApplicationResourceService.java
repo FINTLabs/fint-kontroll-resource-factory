@@ -69,8 +69,8 @@ public class ApplicationResourceService {
         applicationResource.setResourceId(lisensResource.getSystemId().getIdentifikatorverdi());
         applicationResource.setResourceName(lisensResource.getLisensnavn());
         applicationResource.setResourceType("ApplicationResource");
-        //applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
-        //applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
+        applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
+        applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
         applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));

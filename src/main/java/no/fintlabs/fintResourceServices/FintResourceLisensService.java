@@ -31,7 +31,7 @@ public class FintResourceLisensService {
         return organisasjonselementResourcesFintCache
                 .getOptional(lisensEierHref)
                 .map(orgunit -> orgunit.getOrganisasjonsId().getIdentifikatorverdi())
-                .orElse("ingen owner funnet ");
+                .orElse("ingen lisenseier funnet ");
     }
 
     public Long getResourceLimit(LisensResource lisensResource) {
