@@ -17,6 +17,7 @@ public class FintResourceLisensService {
     }
 
     public String getResourceOwnerOrgUnitName(LisensResource lisensResource) {
+        if (lisensResource.getLisenseier().isEmpty()) {return " ingen lisenseierinfo";}
         String lisenseierHref = lisensResource.getLisenseier().get(0).getHref().toLowerCase();
 
         return organisasjonselementResourcesFintCache
@@ -26,6 +27,7 @@ public class FintResourceLisensService {
     }
 
     public String getResourceOwnerOrgUnitId(LisensResource lisensResource) {
+        if (lisensResource.getLisenseier().isEmpty()) {return " ingen lisenseierinfo";}
         String lisensEierHref = lisensResource.getLisenseier().get(0).getHref().toLowerCase();
 
         return organisasjonselementResourcesFintCache
