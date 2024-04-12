@@ -77,6 +77,10 @@ public class ApplicationResourceService {
         applicationResource.setValidForRoles(fintResourceBrukertypeService.getValidForRoles(lisensResource));
         applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
+        // Nye felter 3.18
+//        applicationResource.setLicenseEnforcement();
+        applicationResource.setStatus("ACTIVE");
+//        applicationResource.setStatusChanged();
         return Optional.of(applicationResource);
     }
 }
