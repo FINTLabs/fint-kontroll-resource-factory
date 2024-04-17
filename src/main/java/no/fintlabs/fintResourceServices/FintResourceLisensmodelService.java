@@ -20,13 +20,13 @@ public class FintResourceLisensmodelService {
     public String getAccessType(LisensResource lisensResource) {
 
         if (lisensResource.getLisensmodell().isEmpty()) {
-            return "* Ukjent";
+            return "Ukjent";
         }
         Link lisensModellLink = lisensResource.getLisensmodell().get(0);
 
         return lisensmodellResourceFintCache
                 .getOptional(lisensModellLink.getHref())
                 .map(LisensmodellResource::getNavn)
-                .orElse("");
+                .orElse("ingen lisensinfo");
     }
 }
