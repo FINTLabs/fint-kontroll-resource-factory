@@ -5,6 +5,7 @@ import no.fint.model.resource.Link;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.BrukertypeResource;
+import no.fintlabs.links.ResourceLinkUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,10 +32,11 @@ public class FintResourceBrukertypeService {
         return lisensResource.getTilgjengeligforbrukertype()
                 .stream()
                 .map(Link::getHref)
+                .map(ResourceLinkUtil::systemIdToLowerCase)
                 .map(brukertypeResourceFintCache::getOptional)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(BrukertypeResource::getKode)
+                .map(BrukertypeResource::getNavn)
                 .toList();
     }
 }
