@@ -5,6 +5,7 @@ import no.fint.model.resource.Link;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.LisensmodellResource;
+import no.fintlabs.links.ResourceLinkUtil;
 import org.springframework.stereotype.Service;
 
 
@@ -22,10 +23,10 @@ public class FintResourceLisensmodelService {
         if (lisensResource.getLisensmodell().isEmpty()) {
             return "Ukjent";
         }
-        Link lisensModellLink = lisensResource.getLisensmodell().get(0);
+        String href = ResourceLinkUtil.systemIdToLowerCase(lisensResource.getLisensmodell().get(0).getHref());
 
         return lisensmodellResourceFintCache
-                .getOptional(lisensModellLink.getHref())
+                .getOptional(href)
                 .map(LisensmodellResource::getNavn)
                 .orElse("ingen lisensinfo");
     }
