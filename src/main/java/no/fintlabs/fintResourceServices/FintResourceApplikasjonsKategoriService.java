@@ -6,11 +6,11 @@ import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.ApplikasjonResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.ApplikasjonskategoriResource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -47,5 +47,33 @@ public class FintResourceApplikasjonsKategoriService {
                .map(Optional::get)
                .map(ApplikasjonskategoriResource::getNavn)
                .toList();
+    }
+
+
+    public Map<String,String> getAllApplicationCategories(){
+        Map<String,String> applicationCategories = new HashMap<>();
+        applicationCategories = applikasjonskategoriResourceFintCache.getAllDistinct()
+                .stream()
+                .map(this::getApplicationCategory)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (existing, replacement) -> replacement
+                ));
+
+      applicationCategories.forEach((key,value) -> {
+          log.info("{} :: {}", key, value);
+
+      });
+
+
+        return applicationCategories;
+    }
+
+    public Map<String,String> getApplicationCategory(ApplikasjonskategoriResource applikasjonskategoriResource){
+        Map<String,String> applicationCategory = new HashMap<>();
+        applicationCategory.put(applikasjonskategoriResource.getSystemId().getIdentifikatorverdi(), applikasjonskategoriResource.getNavn());
+        return applicationCategory;
     }
 }
