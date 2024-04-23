@@ -7,9 +7,11 @@ import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.Applikasjon
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.ApplikasjonskategoriResource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,13 +19,15 @@ import java.util.stream.Collectors;
 public class FintResourceApplikasjonsKategoriService {
     private final FintCache<String, ApplikasjonskategoriResource> applikasjonskategoriResourceFintCache;
     private final FintCache<String, ApplikasjonResource> applikasjonResourceFintCache;
+    private final ApplicationCategoryProduserService applicationCategoryProduserService;
 
     public FintResourceApplikasjonsKategoriService(
             FintCache<String, ApplikasjonskategoriResource> applikasjonskategoriResourceFintCache,
-            FintCache<String, ApplikasjonResource> applikasjonResourceFintCache
+            FintCache<String, ApplikasjonResource> applikasjonResourceFintCache, ApplicationCategoryProduserService applicationCategoryProduserService
     ) {
         this.applikasjonskategoriResourceFintCache = applikasjonskategoriResourceFintCache;
         this.applikasjonResourceFintCache = applikasjonResourceFintCache;
+        this.applicationCategoryProduserService = applicationCategoryProduserService;
     }
 
     public List<String> getApplikasjonskategori(LisensResource lisensResource) {
@@ -49,8 +53,8 @@ public class FintResourceApplikasjonsKategoriService {
                .toList();
     }
 
-
-    public Map<String,String> getAllApplicationCategories(){
+@Scheduled(initialDelay = 5000, fixedDelay = 50000)
+    public Map<String,String> getAllApplicationCategoriesAndPublish(){
         Map<String,String> applicationCategories = new HashMap<>();
         applicationCategories = applikasjonskategoriResourceFintCache.getAllDistinct()
                 .stream()
@@ -61,11 +65,7 @@ public class FintResourceApplikasjonsKategoriService {
                         Map.Entry::getValue,
                         (existing, replacement) -> replacement
                 ));
-
-      applicationCategories.forEach((key,value) -> {
-          log.info("{} :: {}", key, value);
-
-      });
+        applicationCategoryProduserService.publish(applicationCategories);
 
 
         return applicationCategories;

@@ -84,10 +84,3 @@ public class ApplicationResourceService {
         return Optional.of(applicationResource);
     }
 }
-
-
-//                  ** Avventer **
-//               -  applicationAccessType("") Applikasjonstilgang eller applikasjonsrolletilgang.
-//               -  applicationAccessRole("") Evt rolle til intern tilgang i app. Ref qlik. applicationAccesstype må være
-//                  "applikasjonsrolletilgang for at dette feltet er fylt ut"
-
