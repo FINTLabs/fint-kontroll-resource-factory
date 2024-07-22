@@ -6,12 +6,10 @@ import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.ApplikasjonResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.ApplikasjonskategoriResource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,8 +51,8 @@ public class FintResourceApplikasjonsKategoriService {
                .toList();
     }
 
-@Scheduled(initialDelay = 5000, fixedDelay = 50000)
-    public Map<String,String> getAllApplicationCategoriesAndPublish(){
+@Scheduled(initialDelay = 10000, fixedDelay = 50000)
+    public void getAllApplicationCategoriesAndPublish(){
         Map<String,String> applicationCategories = new HashMap<>();
         applicationCategories = applikasjonskategoriResourceFintCache.getAllDistinct()
                 .stream()
@@ -68,8 +66,7 @@ public class FintResourceApplikasjonsKategoriService {
         applicationCategoryProduserService.publish(applicationCategories);
 
 
-        return applicationCategories;
-    }
+}
 
     public Map<String,String> getApplicationCategory(ApplikasjonskategoriResource applikasjonskategoriResource){
         Map<String,String> applicationCategory = new HashMap<>();
