@@ -22,10 +22,10 @@ jobs:
       tags: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v4.1.7
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v3.2.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -39,7 +39,7 @@ jobs:
           tags: type=sha,enable=true,priority=100,prefix=shaF-,suffix=,format=short
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -58,26 +58,25 @@ jobs:
         include:
           - org: fintlabs-no
             cluster: aks-beta-fint-2021-11-23
-          - org: ofk-no
-            cluster: aks-api-fint-2022-02-08
           - org: afk-no
             cluster: aks-api-fint-2022-02-08
           - org: bfk-no
             cluster: aks-api-fint-2022-02-08
-
+          - org: ofk-no
+            cluster: aks-api-fint-2022-02-08
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v4.1.7
 
       - name: Get environment
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: environment
         with:
           script: return '${{ matrix.cluster }}'.split('-')[1]
           result-encoding: string
 
       - name: Get resource group name
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: resource-group
         with:
           script: return 'rg-aks-${{ steps.environment.outputs.result }}'
@@ -94,12 +93,12 @@ jobs:
         with:
           creds: "${{ secrets[format('AKS_{0}_FINT_GITHUB', steps.environment.outputs.result)] }}"
 
-      - uses: azure/use-kubelogin@v1.1
+      - uses: azure/use-kubelogin@v1.2
         with:
-          kubelogin-version: 'v0.0.26'
+          kubelogin-version: 'v0.0.32'
 
       - name: Set the target cluster
-        uses: azure/aks-set-context@v3
+        uses: azure/aks-set-context@v4
         with:
           cluster-name: '${{ matrix.cluster }}'
           resource-group: '${{ steps.resource-group.outputs.result }}'
@@ -107,20 +106,9 @@ jobs:
           use-kubelogin: 'true'
 
       - name: Deploy
-        uses: azure/k8s-deploy@v4.10
+        uses: azure/k8s-deploy@v5
         with:
           action: deploy
           manifests: ${{ steps.bake.outputs.manifestsBundle }}
           images: ${{ needs.build-and-push.outputs.tags }}
           namespace: ${{ matrix.org }}
-
-      - name: Post to a Slack channel
-        if: failure()
-        id: slack
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: 'C05PWAGTUFK' # Channel fint-kontroll-builds
-          slack-message: ":x: *Build or deploy Failed!* for repository *${{ github.repository }}* on branch *${{ github.ref }}*.
-          [View Details]: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
