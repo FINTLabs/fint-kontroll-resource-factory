@@ -16,6 +16,16 @@ fint:
         initial-delay: 20000
         initial-delay-elev: 25000
         fixed-delay: 20000
+    resource:
+      license-enforcement:
+        hard-stop: 1
+        floating: 3
+        free-all: 2
+        free-edu:
+        free-student:
+#      valid-role-to-usertype:
+#        5b13297615105560b150c373: STUDENT, EMPLOYEEFACULTY
+
 spring:
   kafka:
     consumer:
