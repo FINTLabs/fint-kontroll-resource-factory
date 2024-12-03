@@ -11,6 +11,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +38,12 @@ public class ApplicationResourceService {
     private List<String> freeEduLicenseModels;
     @Value("${fint.kontroll.resource.license-enforcement.free-student}")
     private List<String> freeStudentLicenseModels;
+    @Value("${fint.kontroll.resource.valid-roles-for-usertype.student}")
+    private String studentRole;
+    @Value("${fint.kontroll.resource.valid-roles-for-usertype.employee-faculty}")
+    private String employeeFacultyRole;
+    @Value("${fint.kontroll.resource.valid-roles-for-usertype.employee-staff}")
+    private String employeeStaffRole;
 
     public ApplicationResourceService(FintCache<String, LisensResource> lisensResourceFintCache,
                                       FintResourceLisensService fintResourceLisensService,
@@ -88,7 +96,8 @@ public class ApplicationResourceService {
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
         //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
-        applicationResource.setValidForRoles(fintResourceBrukertypeService.getValidForRoles(lisensResource));
+        applicationResource.setValidForRoles(fintResourceBrukertypeService.getValidForRoleNames(lisensResource));
+        applicationResource.setUserTypes(mapValidForRolesToUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
         applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
         // Nye felter 3.18
@@ -100,7 +109,7 @@ public class ApplicationResourceService {
     }
     private String mapLicenseModelToLicenseEnforcement(LisensResource lisensResource) {
         Optional<String> licenseModel =
-                lisensResource.getLisensmodell()
+                lisensResource.getTilgjengeligforbrukertype()
                         .stream()
                         .findFirst()
                         .map(Link::getHref);
@@ -126,5 +135,31 @@ public class ApplicationResourceService {
             return "FREE-ALL";
         }
         return "FREE-ALL";
+    }
+    private List<String> mapValidForRolesToUserTypes(List<String> validForRoles) {
+        List<String> userTypes = new ArrayList<>();
+
+        if (validForRoles.contains(studentRole)) {
+            userTypes.add("STUDENT");
+        }
+        if (validForRoles.contains(employeeFacultyRole)) {
+            userTypes.add("EMPLOYEEFACULTY");
+        }
+        if (validForRoles.contains(employeeStaffRole)) {
+            userTypes.add("EMPLOYEESTAFF");
+        }
+        if (validForRoles.contains(studentRole) && validForRoles.contains(employeeFacultyRole)) {
+            userTypes.add("EDU");
+        }
+        if (validForRoles.contains(employeeFacultyRole) && validForRoles.contains(employeeStaffRole)) {
+            userTypes.add("EMPLOYEE");
+        }
+        if (validForRoles.contains(studentRole)
+                && validForRoles.contains(employeeFacultyRole)
+                && validForRoles.contains(employeeStaffRole)
+        ) {
+            userTypes.add("ALLTYPES");
+        }
+        return userTypes;
     }
 }

@@ -23,8 +23,10 @@ fint:
         free-all: 2
         free-edu:
         free-student:
-#      valid-role-to-usertype:
-#        5b13297615105560b150c373: STUDENT, EMPLOYEEFACULTY
+      valid-roles-for-usertype:
+        student: 1
+        employee-staff: 2
+        employee-faculty: 3
 
 spring:
   kafka:
