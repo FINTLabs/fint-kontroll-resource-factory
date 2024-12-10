@@ -4,21 +4,24 @@ import no.fint.model.resource.Link;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocationService;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceServices.*;
+import no.fintlabs.kodeverk.Handhevingstype;
+import no.fintlabs.kodeverk.Brukertype;
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.cache.FintCache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Slf4j
 public class ApplicationResourceService {
+    private final  ApplicationResourceConfiguration applicationResourceConfiguration;
     private final FintCache<String, LisensResource> lisensResourceFintCache;
     private final FintResourceLisensService fintResourceLisensService;
     private final FintResourcePlattformService fintResourcePlattformService;
@@ -28,24 +31,8 @@ public class ApplicationResourceService {
     private final ApplicationResourceLocationService applicationResourceLocationService;
     private final ApplicationResourceEntityProducerService applicationResourceEntityProducerService;
 
-    @Value("${fint.kontroll.resource.license-enforcement.hard-stop}")
-    private List<String> hardStopLicenseModels;
-    @Value("${fint.kontroll.resource.license-enforcement.floating}")
-    private List<String> floatingLicenseModels;
-    @Value("${fint.kontroll.resource.license-enforcement.free-all}")
-    private List<String> freeAllLicenseModels;
-    @Value("${fint.kontroll.resource.license-enforcement.free-edu}")
-    private List<String> freeEduLicenseModels;
-    @Value("${fint.kontroll.resource.license-enforcement.free-student}")
-    private List<String> freeStudentLicenseModels;
-    @Value("${fint.kontroll.resource.valid-roles-for-usertype.student}")
-    private String studentRole;
-    @Value("${fint.kontroll.resource.valid-roles-for-usertype.employee-faculty}")
-    private String employeeFacultyRole;
-    @Value("${fint.kontroll.resource.valid-roles-for-usertype.employee-staff}")
-    private String employeeStaffRole;
-
-    public ApplicationResourceService(FintCache<String, LisensResource> lisensResourceFintCache,
+    public ApplicationResourceService(ApplicationResourceConfiguration applicationResourceConfiguration,
+                                      FintCache<String, LisensResource> lisensResourceFintCache,
                                       FintResourceLisensService fintResourceLisensService,
                                       FintResourcePlattformService fintResourcePlattformService,
                                       FintResourceBrukertypeService fintResourceBrukertypeService,
@@ -53,6 +40,7 @@ public class ApplicationResourceService {
                                       ApplicationResourceLocationService applicationResourceLocationService,
                                       ApplicationResourceEntityProducerService applicationResourceEntityProducerService,
                                       FintResourceApplikasjonsKategoriService fintResourceApplikasjonsKategoriService) {
+        this.applicationResourceConfiguration = applicationResourceConfiguration;
         this.lisensResourceFintCache = lisensResourceFintCache;
         this.fintResourceLisensService = fintResourceLisensService;
         this.fintResourcePlattformService = fintResourcePlattformService;
@@ -63,26 +51,18 @@ public class ApplicationResourceService {
         this.fintResourceApplikasjonsKategoriService = fintResourceApplikasjonsKategoriService;
     }
 
-    @Scheduled(
-            initialDelayString = "${fint.kontroll.user.publishing.initial-delay}",
-            fixedDelayString = "${fint.kontroll.user.publishing.fixed-delay}"
-    )
-    public void toApplicationResourceFromFintObject() {
-        List<ApplicationResource> applicationResources = lisensResourceFintCache.getAllDistinct()
+
+    public List<ApplicationResource> getAllApplicationResources() {
+        return lisensResourceFintCache.getAllDistinct()
                 .stream()
                 .filter(lisensResource -> !lisensResource.getLisenstilgang().isEmpty())
                 .filter(lisensResource -> !lisensResource.getApplikasjon().isEmpty())
                 .map(this::createApplicationResource)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .filter(applicationResource -> ! applicationResource.getApplicationCategory().contains("Pedagogisk verktøy"))
+                //.filter(applicationResource -> ! applicationResource.getApplicationCategory().contains("Pedagogisk verktøy"))
                 .toList();
-
-        List<ApplicationResource> applicationResourcesPublished = applicationResourceEntityProducerService
-                .publish(applicationResources);
-        log.info("ApplicationResources created/published to kafka: " + applicationResources.size() +"/" + applicationResourcesPublished.size());
-    }
-
+     }
 
     private Optional<ApplicationResource> createApplicationResource(LisensResource lisensResource) {
 
@@ -115,50 +95,58 @@ public class ApplicationResourceService {
                         .map(Link::getHref);
 
         if (licenseModel.isEmpty()) {
-            return "NOT-SPECIFIED";
+            return Handhevingstype.NOTSPECIFIED.name();
         }
         String licenseModelId = StringUtils.substringAfterLast(licenseModel.get(), "/");
 
-        if (hardStopLicenseModels.contains(licenseModelId)) {
-            return "HARD-STOP";
+        if (applicationResourceConfiguration.getLicenseEnforcement().getHardStop().contains(licenseModelId)) {
+            return Handhevingstype.HARDSTOP.name();
         }
-        if (floatingLicenseModels.contains(licenseModelId)) {
-            return "FLOATING";
+        if (applicationResourceConfiguration.getLicenseEnforcement().getFloating().contains(licenseModelId)) {
+            return Handhevingstype.FLOATING.name();
         }
-        if (freeStudentLicenseModels.contains(licenseModelId)) {
-            return "FREE-STUDENT";
+        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeStudent().contains(licenseModelId)) {
+            return Handhevingstype.FREESTUDENT.name();
         }
-        if (freeEduLicenseModels.contains(licenseModelId)) {
-            return "FREE-EDU";
+        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeEdu().contains(licenseModelId)) {
+            return Handhevingstype.FREEEDU.name();
         }
-        if (freeAllLicenseModels.contains(licenseModelId)) {
-            return "FREE-ALL";
+        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeAll() .contains(licenseModelId)) {
+            return Handhevingstype.FREEALL.name();
         }
-        return "FREE-ALL";
+        return Handhevingstype.FREEALL.name();
     }
     private List<String> mapValidForRolesToUserTypes(List<String> validForRoles) {
         List<String> userTypes = new ArrayList<>();
 
-        if (validForRoles.contains(studentRole)) {
-            userTypes.add("STUDENT");
+        if (validForRoles.isEmpty()) {
+            userTypes.add(Brukertype.ALLTYPES.name());
+            return userTypes;
         }
-        if (validForRoles.contains(employeeFacultyRole)) {
-            userTypes.add("EMPLOYEEFACULTY");
+        List<String> studentRoles = applicationResourceConfiguration.getValidRolesForUsertype().getStudent();
+        List<String> employeeFacultyRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeFaculty();
+        List<String> employeeStaffRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeStaff();
+
+        if (CollectionUtils.containsAny(validForRoles, studentRoles)) {
+            userTypes.add(Brukertype.STUDENT.name());
         }
-        if (validForRoles.contains(employeeStaffRole)) {
-            userTypes.add("EMPLOYEESTAFF");
+        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
+            userTypes.add(Brukertype.EMPLOYEEFACULTY.name());
         }
-        if (validForRoles.contains(studentRole) && validForRoles.contains(employeeFacultyRole)) {
-            userTypes.add("EDU");
+        if (CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
+            userTypes.add(Brukertype.EMPLOYEESTAFF.name());
         }
-        if (validForRoles.contains(employeeFacultyRole) && validForRoles.contains(employeeStaffRole)) {
-            userTypes.add("EMPLOYEE");
+        if (CollectionUtils.containsAny(validForRoles, studentRoles) && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
+            userTypes.add(Brukertype.EDU.name());
         }
-        if (validForRoles.contains(studentRole)
-                && validForRoles.contains(employeeFacultyRole)
-                && validForRoles.contains(employeeStaffRole)
+        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles) && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
+            userTypes.add(Brukertype.EMPLOYEE.name()  );
+        }
+        if (CollectionUtils.containsAny(validForRoles, studentRoles)
+                && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)
+                && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)
         ) {
-            userTypes.add("ALLTYPES");
+            userTypes.add(Brukertype.ALLTYPES.name());
         }
         return userTypes;
     }
