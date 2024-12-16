@@ -31,12 +31,12 @@ public class ValidForRolesMapping {
         if (CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
             userTypes.add(Brukertype.EMPLOYEESTAFF.name());
         }
-        if (CollectionUtils.containsAny(validForRoles, studentRoles) && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
-            userTypes.add(Brukertype.EDU.name());
-        }
-        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles) && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
-            userTypes.add(Brukertype.EMPLOYEE.name()  );
-        }
+//        if (CollectionUtils.containsAny(validForRoles, studentRoles) && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
+//            userTypes.add(Brukertype.EDU.name());
+//        }
+//        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles) && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
+//            userTypes.add(Brukertype.EMPLOYEE.name()  );
+//        }
         if (CollectionUtils.containsAny(validForRoles, studentRoles)
                 && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)
                 && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)
