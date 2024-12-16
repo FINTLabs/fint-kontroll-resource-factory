@@ -76,78 +76,78 @@ public class ApplicationResourceService {
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
         //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
-        applicationResource.setValidForRoles(fintResourceBrukertypeService.getValidForRoleNames(lisensResource));
-        applicationResource.setUserTypes(mapValidForRolesToUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
+        applicationResource.setValidForRoles(ValidForRolesMapping.mapValidForRolesToUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
+        //applicationResource.setUserTypes(mapValidForRolesToUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
         applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
         // Nye felter 3.18
         //applicationResource.setLicenseModel(fintResourceLisensmodelService.getLicenseModel(lisensResource));
-        applicationResource.setLicenseEnforcement(mapLicenseModelToLicenseEnforcement(lisensResource));
+        applicationResource.setLicenseEnforcement(LicenseModelMapping.mapLicenseModelToLicenseEnforcement(lisensResource, applicationResourceConfiguration));
         applicationResource.setStatus("ACTIVE");
 //        applicationResource.setStatusChanged();
         return Optional.of(applicationResource);
     }
-    private String mapLicenseModelToLicenseEnforcement(LisensResource lisensResource) {
-        Optional<String> licenseModel =
-                lisensResource.getTilgjengeligforbrukertype()
-                        .stream()
-                        .findFirst()
-                        .map(Link::getHref);
-
-        if (licenseModel.isEmpty()) {
-            return Handhevingstype.NOTSPECIFIED.name();
-        }
-        String licenseModelId = StringUtils.substringAfterLast(licenseModel.get(), "/");
-
-        if (applicationResourceConfiguration.getLicenseEnforcement().getHardStop().contains(licenseModelId)) {
-            return Handhevingstype.HARDSTOP.name();
-        }
-        if (applicationResourceConfiguration.getLicenseEnforcement().getFloating().contains(licenseModelId)) {
-            return Handhevingstype.FLOATING.name();
-        }
-        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeStudent().contains(licenseModelId)) {
-            return Handhevingstype.FREESTUDENT.name();
-        }
-        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeEdu().contains(licenseModelId)) {
-            return Handhevingstype.FREEEDU.name();
-        }
-        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeAll() .contains(licenseModelId)) {
-            return Handhevingstype.FREEALL.name();
-        }
-        return Handhevingstype.FREEALL.name();
-    }
-    private List<String> mapValidForRolesToUserTypes(List<String> validForRoles) {
-        List<String> userTypes = new ArrayList<>();
-
-        if (validForRoles.isEmpty()) {
-            userTypes.add(Brukertype.ALLTYPES.name());
-            return userTypes;
-        }
-        List<String> studentRoles = applicationResourceConfiguration.getValidRolesForUsertype().getStudent();
-        List<String> employeeFacultyRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeFaculty();
-        List<String> employeeStaffRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeStaff();
-
-        if (CollectionUtils.containsAny(validForRoles, studentRoles)) {
-            userTypes.add(Brukertype.STUDENT.name());
-        }
-        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
-            userTypes.add(Brukertype.EMPLOYEEFACULTY.name());
-        }
-        if (CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
-            userTypes.add(Brukertype.EMPLOYEESTAFF.name());
-        }
-        if (CollectionUtils.containsAny(validForRoles, studentRoles) && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
-            userTypes.add(Brukertype.EDU.name());
-        }
-        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles) && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
-            userTypes.add(Brukertype.EMPLOYEE.name()  );
-        }
-        if (CollectionUtils.containsAny(validForRoles, studentRoles)
-                && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)
-                && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)
-        ) {
-            userTypes.add(Brukertype.ALLTYPES.name());
-        }
-        return userTypes;
-    }
+//    private String mapLicenseModelToLicenseEnforcement(LisensResource lisensResource) {
+//        Optional<String> licenseModel =
+//                lisensResource.getTilgjengeligforbrukertype()
+//                        .stream()
+//                        .findFirst()
+//                        .map(Link::getHref);
+//
+//        if (licenseModel.isEmpty()) {
+//            return Handhevingstype.NOTSPECIFIED.name();
+//        }
+//        String licenseModelId = StringUtils.substringAfterLast(licenseModel.get(), "/");
+//
+//        if (applicationResourceConfiguration.getLicenseEnforcement().getHardStop().contains(licenseModelId)) {
+//            return Handhevingstype.HARDSTOP.name();
+//        }
+//        if (applicationResourceConfiguration.getLicenseEnforcement().getFloating().contains(licenseModelId)) {
+//            return Handhevingstype.FLOATING.name();
+//        }
+//        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeStudent().contains(licenseModelId)) {
+//            return Handhevingstype.FREESTUDENT.name();
+//        }
+//        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeEdu().contains(licenseModelId)) {
+//            return Handhevingstype.FREEEDU.name();
+//        }
+//        if (applicationResourceConfiguration.getLicenseEnforcement().getFreeAll() .contains(licenseModelId)) {
+//            return Handhevingstype.FREEALL.name();
+//        }
+//        return Handhevingstype.FREEALL.name();
+//    }
+//   private List<String> mapValidForRolesToUserTypes(List<String> validForRoles) {
+//        List<String> userTypes = new ArrayList<>();
+//
+//        if (validForRoles.isEmpty()) {
+//            userTypes.add(Brukertype.ALLTYPES.name());
+//            return userTypes;
+//        }
+//        List<String> studentRoles = applicationResourceConfiguration.getValidRolesForUsertype().getStudent();
+//        List<String> employeeFacultyRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeFaculty();
+//        List<String> employeeStaffRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeStaff();
+//
+//        if (CollectionUtils.containsAny(validForRoles, studentRoles)) {
+//            userTypes.add(Brukertype.STUDENT.name());
+//        }
+//        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
+//            userTypes.add(Brukertype.EMPLOYEEFACULTY.name());
+//        }
+//        if (CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
+//            userTypes.add(Brukertype.EMPLOYEESTAFF.name());
+//        }
+//        if (CollectionUtils.containsAny(validForRoles, studentRoles) && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
+//            userTypes.add(Brukertype.EDU.name());
+//        }
+//        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles) && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
+//            userTypes.add(Brukertype.EMPLOYEE.name()  );
+//        }
+//        if (CollectionUtils.containsAny(validForRoles, studentRoles)
+//                && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)
+//                && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)
+//        ) {
+//            userTypes.add(Brukertype.ALLTYPES.name());
+//        }
+//        return userTypes;
+//    }
 }
