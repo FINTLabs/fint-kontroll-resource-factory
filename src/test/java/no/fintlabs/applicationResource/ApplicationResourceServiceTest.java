@@ -113,7 +113,7 @@ class ApplicationResourceServiceTest {
 
         assertEquals(1, applicationResources.size());
         assertEquals(Handhevingstype.HARDSTOP.toString(), applicationResources.getFirst().getAccessType());
-        assertEquals(Set.of(Brukertype.STUDENT.toString(), Brukertype.EMPLOYEEFACULTY.toString(), Brukertype.EDU.toString()),
+        assertEquals(Set.of(Brukertype.STUDENT.toString(), Brukertype.EMPLOYEEFACULTY.toString()),
                 Set.copyOf(applicationResources.getFirst().getValidForRoles()));
 
     }
