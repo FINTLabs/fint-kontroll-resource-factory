@@ -27,7 +27,7 @@ fint:
         student: 1,4
         employee-staff: 2,5
         employee-faculty: 3,4,5
-
+        all-types: 6
 spring:
   kafka:
     consumer:

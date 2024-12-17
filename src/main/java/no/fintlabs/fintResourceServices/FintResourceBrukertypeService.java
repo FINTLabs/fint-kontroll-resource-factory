@@ -24,6 +24,9 @@ public class FintResourceBrukertypeService {
         this.brukertypeResourceFintCache = brukertypeResourceFintCache;
     }
 
+    public Optional<List<BrukertypeResource>> getAllBrukertypeResources() {
+        return Optional.of(brukertypeResourceFintCache.getAll());
+    }
     public List<String> getValidForRoleNames(LisensResource lisensResource) {
 
         if (lisensResource.getTilgjengeligforbrukertype().isEmpty()) {

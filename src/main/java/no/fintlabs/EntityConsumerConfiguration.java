@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.FintLinks;
 import no.fintlabs.applicationResource.ApplicationResource;
 import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementResource;
+import no.fintlabs.applicationResource.ApplicationResourceUserType;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.ApplikasjonResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
@@ -132,5 +133,17 @@ public class EntityConsumerConfiguration {
                                 consumerRecord.value().hashCode()
                         )
         ).createContainer(EntityTopicNameParameters.builder().resource("applicationresource").build());
+    }
+    @Bean
+    ConcurrentMessageListenerContainer<String, ApplicationResourceUserType> applicationResourceUserTypeEntityConsumer(
+            FintCache<String, ApplicationResourceUserType> publishedApplicationResourceUserTypeHashCache) {
+        return entityConsumerFactoryService.createFactory(
+                ApplicationResourceUserType.class,
+                consumerRecord ->
+                        publishedApplicationResourceUserTypeHashCache.put(
+                                consumerRecord.value().internalUserType(),
+                                consumerRecord.value()
+                        )
+        ).createContainer(EntityTopicNameParameters.builder().resource("applicationresource-usertype").build());
     }
 }
