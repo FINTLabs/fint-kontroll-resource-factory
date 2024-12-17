@@ -21,6 +21,7 @@ public class ValidForRolesMapping {
         List<String> studentRoles = applicationResourceConfiguration.getValidRolesForUsertype().getStudent();
         List<String> employeeFacultyRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeFaculty();
         List<String> employeeStaffRoles = applicationResourceConfiguration.getValidRolesForUsertype().getEmployeeStaff();
+        List<String> allTypeRoles = applicationResourceConfiguration.getValidRolesForUsertype().getAllTypes();
 
         if (CollectionUtils.containsAny(validForRoles, studentRoles)) {
             userTypes.add(Brukertype.STUDENT.name());
@@ -37,7 +38,7 @@ public class ValidForRolesMapping {
 //        if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles) && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
 //            userTypes.add(Brukertype.EMPLOYEE.name()  );
 //        }
-        if (CollectionUtils.containsAny(validForRoles, studentRoles)
+        if (CollectionUtils.containsAny(validForRoles, allTypeRoles) || CollectionUtils.containsAny(validForRoles, studentRoles)
                 && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)
                 && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)
         ) {

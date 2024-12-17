@@ -26,5 +26,6 @@ public class ApplicationResourceConfiguration {
         private List<String> student;
         private List<String> employeeFaculty;
         private List<String> employeeStaff;
+        private List<String> allTypes;
     }
 }

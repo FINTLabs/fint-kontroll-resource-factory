@@ -3,6 +3,7 @@ package no.fintlabs.applicationResource;
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.BrukertypeResource;
 import no.fintlabs.fintResourceServices.FintResourceBrukertypeService;
+import no.fintlabs.kodeverk.Brukertype;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,11 +30,20 @@ public class ApplicationResourceUserTypeService {
         return brukertypeResources.get()
                 .stream()
                 .map(this::createApplicationResourceUserType)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList();
     }
-    private ApplicationResourceUserType createApplicationResourceUserType(BrukertypeResource brukertypeResource) {
-        String internalUserType = ValidForRolesMapping.mapValidForRolesToUserTypes(
-                List.of(brukertypeResource.getSystemId().getIdentifikatorverdi()), applicationResourceConfiguration).getFirst();
-        return new ApplicationResourceUserType(internalUserType, brukertypeResource.getNavn());
+
+    private Optional<ApplicationResourceUserType> createApplicationResourceUserType (BrukertypeResource brukertypeResource) {
+        List<String> internalUserTypes = ValidForRolesMapping.mapValidForRolesToUserTypes(
+                List.of(brukertypeResource.getSystemId().getIdentifikatorverdi()), applicationResourceConfiguration);
+        if (internalUserTypes.isEmpty()) {
+            log.warn("No internal user type found for brukertype resource with systemId: {}", brukertypeResource.getSystemId().getIdentifikatorverdi());
+            return Optional.empty();
+        }
+        String internalUserType = internalUserTypes.contains(Brukertype.ALLTYPES.name()) ? Brukertype.ALLTYPES.name() : internalUserTypes.getFirst();
+
+        return Optional.of(new ApplicationResourceUserType(internalUserType, brukertypeResource.getNavn()));
     }
 }
