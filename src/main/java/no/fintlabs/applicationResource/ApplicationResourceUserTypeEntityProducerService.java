@@ -38,7 +38,7 @@ public class ApplicationResourceUserTypeEntityProducerService {
                 .stream()
                 .filter(userType -> ApplicationResourceUserTypeCache
                         .getOptional(userType.internalUserType())
-                        .map(publishedUsrType -> !userType.equals(publishedUsrType))
+                        .map(publishedUserType -> !userType.equals(publishedUserType))
                         .orElse(true)
                 )
                 .peek(this::publish)
