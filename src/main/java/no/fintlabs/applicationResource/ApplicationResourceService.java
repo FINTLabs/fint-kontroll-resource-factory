@@ -1,20 +1,12 @@
 package no.fintlabs.applicationResource;
 
-import no.fint.model.resource.Link;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocationService;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceServices.*;
-import no.fintlabs.kodeverk.Handhevingstype;
-import no.fintlabs.kodeverk.Brukertype;
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.cache.FintCache;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,8 +68,8 @@ public class ApplicationResourceService {
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
         //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
-        applicationResource.setValidForRoles(ValidForRolesMapping.mapValidForRolesToUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
-        //applicationResource.setUserTypes(mapValidForRolesToUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
+        applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
+        //applicationResource.setUserTypes(mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
         applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
         // Nye felter 3.18
