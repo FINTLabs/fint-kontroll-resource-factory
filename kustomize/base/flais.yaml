@@ -10,6 +10,25 @@ spec:
   env:
       - name: spring.kafka.consumer.group-id
         value: 'fint-kontroll-resource-factory'
+      - name: fint.kontroll.resource.license-enforcement.hard-stop
+        value: 'sdfsf'
+      - name: fint.kontroll.resource.license-enforcement.floating
+        value: 'sdfsf'
+      - name: fint.kontroll.resource.license-enforcement.free-all
+        value: 'sdfsf'
+      - name: fint.kontroll.resource.license-enforcement.free-edu
+        value: 'sdfsf'
+      - name: fint.kontroll.resource.license-enforcement.free-student
+        value: 'sdfsf'
+      - name: fint.kontroll.resource.valid-roles-for-usertype.student
+        value: 'eee'
+      - name: fint.kontroll.resource.valid-roles-for-usertype.employee-staff
+        value: 'eee'
+      - name: fint.kontroll.resource.valid-roles-for-usertype.employee-faculty
+        value: 'eee'
+      - name: fint.kontroll.resource.valid-roles-for-usertype.all-types
+        value: 'eee'
+
   kafka:
     enabled: true
     acls:

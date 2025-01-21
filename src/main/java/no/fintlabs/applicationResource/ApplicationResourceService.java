@@ -5,7 +5,6 @@ import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResou
 import no.fintlabs.fintResourceServices.*;
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.cache.FintCache;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class ApplicationResourceService {
+    private final  ApplicationResourceConfiguration applicationResourceConfiguration;
     private final FintCache<String, LisensResource> lisensResourceFintCache;
     private final FintResourceLisensService fintResourceLisensService;
     private final FintResourcePlattformService fintResourcePlattformService;
@@ -23,7 +23,8 @@ public class ApplicationResourceService {
     private final ApplicationResourceLocationService applicationResourceLocationService;
     private final ApplicationResourceEntityProducerService applicationResourceEntityProducerService;
 
-    public ApplicationResourceService(FintCache<String, LisensResource> lisensResourceFintCache,
+    public ApplicationResourceService(ApplicationResourceConfiguration applicationResourceConfiguration,
+                                      FintCache<String, LisensResource> lisensResourceFintCache,
                                       FintResourceLisensService fintResourceLisensService,
                                       FintResourcePlattformService fintResourcePlattformService,
                                       FintResourceBrukertypeService fintResourceBrukertypeService,
@@ -31,6 +32,7 @@ public class ApplicationResourceService {
                                       ApplicationResourceLocationService applicationResourceLocationService,
                                       ApplicationResourceEntityProducerService applicationResourceEntityProducerService,
                                       FintResourceApplikasjonsKategoriService fintResourceApplikasjonsKategoriService) {
+        this.applicationResourceConfiguration = applicationResourceConfiguration;
         this.lisensResourceFintCache = lisensResourceFintCache;
         this.fintResourceLisensService = fintResourceLisensService;
         this.fintResourcePlattformService = fintResourcePlattformService;
@@ -41,26 +43,18 @@ public class ApplicationResourceService {
         this.fintResourceApplikasjonsKategoriService = fintResourceApplikasjonsKategoriService;
     }
 
-    @Scheduled(
-            initialDelayString = "${fint.kontroll.user.publishing.initial-delay}",
-            fixedDelayString = "${fint.kontroll.user.publishing.fixed-delay}"
-    )
-    public void toApplicationResourceFromFintObject() {
-        List<ApplicationResource> applicationResources = lisensResourceFintCache.getAllDistinct()
+
+    public List<ApplicationResource> getAllApplicationResources() {
+        return lisensResourceFintCache.getAllDistinct()
                 .stream()
                 .filter(lisensResource -> !lisensResource.getLisenstilgang().isEmpty())
                 .filter(lisensResource -> !lisensResource.getApplikasjon().isEmpty())
                 .map(this::createApplicationResource)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .filter(applicationResource -> ! applicationResource.getApplicationCategory().contains("Pedagogisk verktøy"))
+                //.filter(applicationResource -> ! applicationResource.getApplicationCategory().contains("Pedagogisk verktøy"))
                 .toList();
-
-        List<ApplicationResource> applicationResourcesPublished = applicationResourceEntityProducerService
-                .publish(applicationResources);
-        log.info("ApplicationResources created/published to kafka: " + applicationResources.size() +"/" + applicationResourcesPublished.size());
-    }
-
+     }
 
     private Optional<ApplicationResource> createApplicationResource(LisensResource lisensResource) {
 
@@ -72,13 +66,15 @@ public class ApplicationResourceService {
         applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
         applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
-        applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
+        //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
-        applicationResource.setValidForRoles(fintResourceBrukertypeService.getValidForRoles(lisensResource));
+        applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
+        //applicationResource.setUserTypes(mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
         applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
         // Nye felter 3.18
-//        applicationResource.setLicenseEnforcement();
+        //applicationResource.setLicenseModel(fintResourceLisensmodelService.getLicenseModel(lisensResource));
+        applicationResource.setLicenseEnforcement(LicenseModelMapping.mapLicenseModelToLicenseEnforcement(lisensResource, applicationResourceConfiguration));
         applicationResource.setStatus("ACTIVE");
 //        applicationResource.setStatusChanged();
         return Optional.of(applicationResource);

@@ -24,10 +24,10 @@ fint:
         free-edu:
         free-student:
       valid-roles-for-usertype:
-        student: cc6d98652b30fefacaa8787e,5b13297615105560b150c373,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9
-        employee-staff: abe40447ab2f0a18fa00d931,f8bb90c80eefa1a7b8ed8a5e,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9
-        employee-faculty: 46b8d74396df230071abc30a,5b13297615105560b150c373,f8bb90c80eefa1a7b8ed8a5e,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9
-        all-types: df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9
+        student: 1
+        employee-staff: 2
+        employee-faculty: 3
+
 spring:
   kafka:
     consumer:

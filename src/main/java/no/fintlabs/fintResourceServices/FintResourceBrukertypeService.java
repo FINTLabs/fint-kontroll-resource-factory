@@ -6,11 +6,14 @@ import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.kodeverk.BrukertypeResource;
 import no.fintlabs.links.ResourceLinkUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
@@ -21,14 +24,16 @@ public class FintResourceBrukertypeService {
         this.brukertypeResourceFintCache = brukertypeResourceFintCache;
     }
 
-    public List<String> getValidForRoles(LisensResource lisensResource) {
+    public Optional<List<BrukertypeResource>> getAllBrukertypeResources() {
+        return Optional.of(brukertypeResourceFintCache.getAll());
+    }
+    public List<String> getValidForRoleNames(LisensResource lisensResource) {
 
         if (lisensResource.getTilgjengeligforbrukertype().isEmpty()) {
             List<String> list = new ArrayList<>();
             list.add("Brukertype ikke satt");
             return list;
         }
-
         return lisensResource.getTilgjengeligforbrukertype()
                 .stream()
                 .map(Link::getHref)
@@ -37,6 +42,18 @@ public class FintResourceBrukertypeService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(BrukertypeResource::getNavn)
+                .toList();
+    }
+
+    public List<String> getAvailableForUsertypeIds(LisensResource lisensResource) {
+
+        if (lisensResource.getTilgjengeligforbrukertype().isEmpty()) {
+            return new ArrayList<>();
+        }
+        return lisensResource.getTilgjengeligforbrukertype()
+                .stream()
+                .map(Link::getHref)
+                .map(href -> StringUtils.substringAfterLast(href,"/"))
                 .toList();
     }
 }

@@ -1,5 +1,6 @@
 package no.fintlabs;
 
+import no.fintlabs.applicationResource.ApplicationResourceUserType;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.cache.FintCacheManager;
 import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementResource;
@@ -62,8 +63,11 @@ public class EntityCacheConfiguration {
 
     @Bean
     FintCache<String, Integer> publishedApplicationResourceHashCache() {
-
         return createCache(Integer.class);
+    }
+    @Bean
+    FintCache<String, ApplicationResourceUserType> publishedApplicationResourceUserCache() {
+        return createCache(ApplicationResourceUserType.class);
     }
 
 
