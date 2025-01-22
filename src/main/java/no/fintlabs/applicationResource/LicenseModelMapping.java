@@ -14,7 +14,7 @@ public class LicenseModelMapping {
             ApplicationResourceConfiguration applicationResourceConfiguration
     ){
         Optional<String> licenseModel =
-                lisensResource.getTilgjengeligforbrukertype()
+                lisensResource.getLisenstilgang()
                         .stream()
                         .findFirst()
                         .map(Link::getHref);
