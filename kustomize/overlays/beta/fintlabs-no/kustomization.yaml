@@ -21,13 +21,13 @@ patches:
         value: "fint-kontroll-resource-factory"
       - op: replace
         path: "/spec/env/1/value"
-        value: "1"
+        value: "3"
       - op: replace
         path: "/spec/env/2/value"
         value: "3"
       - op: replace
         path: "/spec/env/3/value"
-        value: "2"
+        value: "1"
       - op: replace
         path: "/spec/env/4/value"
         value: ""
