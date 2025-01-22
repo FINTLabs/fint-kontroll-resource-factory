@@ -20,7 +20,7 @@ public class LicenseModelMapping {
                 lisensResource.getLisensnavn()
         );
         Optional<String> licenseModel =
-                lisensResource.getLisenstilgang()
+                lisensResource.getLisensmodell()
                         .stream()
                         .findFirst()
                         .map(Link::getHref);
