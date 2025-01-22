@@ -31,6 +31,7 @@ public class LicenseModelMapping {
             );
             return Handhevingstype.NOTSPECIFIED.name();
         }
+        log.info("License model found: {}", licenseModel.get());
         String licenseModelId = StringUtils.substringAfterLast(licenseModel.get(), "/");
 
         if (applicationResourceConfiguration.getLicenseEnforcement().getHardStop().contains(licenseModelId)) {
