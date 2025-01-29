@@ -29,7 +29,7 @@ public class LicenseModelMapping {
             log.warn("No license model found for lisensResource with systemId: {}",
                     lisensResource.getSystemId().getIdentifikatorverdi()
             );
-            return Handhevingstype.NOTSPECIFIED.name();
+            return Handhevingstype.NOTSET.name();
         }
         log.info("License model found: {}", licenseModel.get());
         String licenseModelId = StringUtils.substringAfterLast(licenseModel.get(), "/");
