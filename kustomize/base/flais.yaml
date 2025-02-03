@@ -9,25 +9,25 @@ spec:
   imagePullPolicy: Always
   env:
       - name: spring.kafka.consumer.group-id
-        value: 'fint-kontroll-resource-factory'
+        value: '0 - fint-kontroll-resource-factory'
       - name: fint.kontroll.resource.license-enforcement.hard-stop
-        value: 'sdfsf'
+        value: '1 - list of all license model ids that should be hard-stopped'
       - name: fint.kontroll.resource.license-enforcement.floating
-        value: 'sdfsf'
+        value: '2 - list of all license model ids that should be floating'
       - name: fint.kontroll.resource.license-enforcement.free-all
-        value: 'sdfsf'
+        value: '3 - list of all license model ids that should be free for all'
       - name: fint.kontroll.resource.license-enforcement.free-edu
-        value: 'sdfsf'
+        value: '4 - list of all license model ids that should be free for educational purposes'
       - name: fint.kontroll.resource.license-enforcement.free-student
-        value: 'sdfsf'
+        value: '5 - list of all license model ids that should be free for students'
       - name: fint.kontroll.resource.valid-roles-for-usertype.student
-        value: 'eee'
+        value: '6 - list of all external usertype ids that should be mapped to usertype student'
       - name: fint.kontroll.resource.valid-roles-for-usertype.employee-staff
-        value: 'eee'
+        value: '7 - list of all external usertype ids that should be mapped to usertype employee-staff'
       - name: fint.kontroll.resource.valid-roles-for-usertype.employee-faculty
-        value: 'eee'
+        value: '8 - list of all external usertype ids that should be mapped to usertype employee-faculty'
       - name: fint.kontroll.resource.valid-roles-for-usertype.all-types
-        value: 'eee'
+        value: '9 - list of all external usertype ids that should be mapped to usertype all-types'
 
   kafka:
     enabled: true

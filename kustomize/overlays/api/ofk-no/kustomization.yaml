@@ -24,7 +24,7 @@ patches:
         value: "f67c73c00094393dd77d5e70,582a67a07f3af8abac89dfce"
       - op: replace
         path: "/spec/env/2/value"
-        value: "59f0fa72567d54a9bcf6c8f4"
+        value: "59f0fa72567d54a9bcf6c8f4,532abf8c565311fa5abc7f34"
       - op: replace
         path: "/spec/env/3/value"
         value: "e9e252b4707513ed515e2966"
