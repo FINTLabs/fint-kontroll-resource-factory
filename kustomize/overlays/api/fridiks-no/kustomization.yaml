@@ -1,0 +1,59 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: frid-no
+resources:
+  - ../../../base
+commonLabels:
+  app.kubernetes.io/name: fint-kontroll-resource-factory
+  app.kubernetes.io/instance: fint-kontroll-resource-factory_frid_no
+  app.kubernetes.io/version: latest
+  app.kubernetes.io/component: backend
+  app.kubernetes.io/part-of: fint-kontroll
+  fintlabs.no/team: bas
+  fintlabs.no/org-id: frid.no
+patches:
+  - patch: |-
+      - op: replace
+        path: "/spec/orgId"
+        value: "frid.no"
+      - op: replace
+        path: "/spec/env/0/value"
+        value: "frid-no-fint-kontroll-resource-factory"
+      - op: replace
+        path: "/spec/env/1/value"
+        value: "f67c73c00094393dd77d5e70,582a67a07f3af8abac89dfce"
+      - op: replace
+        path: "/spec/env/2/value"
+        value: "59f0fa72567d54a9bcf6c8f4,532abf8c565311fa5abc7f34"
+      - op: replace
+        path: "/spec/env/3/value"
+        value: "e9e252b4707513ed515e2966"
+      - op: replace
+        path: "/spec/env/4/value"
+        value: ""
+      - op: replace
+        path: "/spec/env/5/value"
+        value: ""
+      - op: replace
+        path: "/spec/env/6/value"
+        value: "cc6d98652b30fefacaa8787e,5b13297615105560b150c373,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9"
+      - op: replace
+        path: "/spec/env/7/value"
+        value: "abe40447ab2f0a18fa00d931,f8bb90c80eefa1a7b8ed8a5e,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9"
+      - op: replace
+        path: "/spec/env/8/value"
+        value: "46b8d74396df230071abc30a,5b13297615105560b150c373,f8bb90c80eefa1a7b8ed8a5e,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9"
+      - op: replace
+        path: "/spec/env/9/value"
+        value: "df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9"
+      - op: replace
+        path: "/spec/kafka/acls/0/topic"
+        value: "frid-no.kontroll.*"
+      - op: replace
+        path: "/spec/kafka/acls/1/topic"
+        value: "frid-no.kontroll.*"
+    target:
+      kind: Application
+      name: fint-kontroll-resource-factory
+
+
