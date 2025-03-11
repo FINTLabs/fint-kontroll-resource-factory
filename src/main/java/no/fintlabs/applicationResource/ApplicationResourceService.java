@@ -70,7 +70,7 @@ public class ApplicationResourceService {
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
         applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
         //applicationResource.setUserTypes(mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
-        applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
+        //applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
         // Nye felter 3.18
         //applicationResource.setLicenseModel(fintResourceLisensmodelService.getLicenseModel(lisensResource));

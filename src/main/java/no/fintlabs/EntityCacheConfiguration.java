@@ -1,6 +1,7 @@
 package no.fintlabs;
 
 import no.fintlabs.applicationResource.ApplicationResourceUserType;
+import no.fintlabs.applicationResourceLocation.ApplicationResourceLocation;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.cache.FintCacheManager;
 import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementResource;
@@ -36,6 +37,11 @@ public class EntityCacheConfiguration {
     @Bean
     FintCache<String, LisenstilgangResource> lisenstilgangResourceFintCache(){
         return createCache(LisenstilgangResource.class);
+    }
+
+    @Bean
+    FintCache<String, ApplicationResourceLocation> applicationResourceLocationFintCache(){
+        return createCache(ApplicationResourceLocation.class);
     }
 
     @Bean

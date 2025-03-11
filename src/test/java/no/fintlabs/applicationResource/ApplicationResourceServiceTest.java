@@ -106,7 +106,7 @@ class ApplicationResourceServiceTest {
         given(fintResourceBrukertypeService.getValidForRoleNames(lisensResource)).willReturn(List.of("STUDENT"));
         given(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)).willReturn(List.of("4"));
         given(fintResourceLisensmodelService.getAccessType(lisensResource)).willReturn("HARDSTOP");
-        given(applicationResourceLocationService.getValidForOrgunits(lisensResource)).willReturn(applicationResourceLocations);
+        //given(applicationResourceLocationService.getValidForOrgunits(lisensResource)).willReturn(applicationResourceLocations);
         given((fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource))).willReturn(List.of("Pedagogisk verktøy"));
 
         List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources();

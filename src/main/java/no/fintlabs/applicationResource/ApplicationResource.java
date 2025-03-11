@@ -22,7 +22,7 @@ public class ApplicationResource extends Resource {
     private String resourceOwnerOrgUnitId;
     private String resourceOwnerOrgUnitName;
     private List<String> validForRoles;
-    private List<ApplicationResourceLocation> validForOrgUnits;
+    //private List<ApplicationResourceLocation> validForOrgUnits;
     //private List<String> userTypes;
     private List<String> applicationCategory;
     //private String licenseModel;

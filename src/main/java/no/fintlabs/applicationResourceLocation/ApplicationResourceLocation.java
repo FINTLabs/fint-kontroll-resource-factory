@@ -11,6 +11,7 @@ import lombok.*;
 public class ApplicationResourceLocation {
     private Long id;
     private String resourceId;
+    private String resourceName;
     private String orgUnitId;
     private String orgUnitName;
     private Long resourceLimit;

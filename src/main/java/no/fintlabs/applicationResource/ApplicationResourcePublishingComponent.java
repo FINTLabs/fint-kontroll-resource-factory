@@ -18,8 +18,8 @@ public class ApplicationResourcePublishingComponent {
     }
 
     @Scheduled(
-            initialDelayString = "${fint.kontroll.user.publishing.initial-delay}",
-            fixedDelayString = "${fint.kontroll.user.publishing.fixed-delay}"
+            initialDelayString = "${fint.kontroll.resource.publishing.initial-delay-application-resource}",
+            fixedDelayString = "${fint.kontroll.resource.publishing.fixed-delay}"
     )
     public void publishApplicationResources() {
 
