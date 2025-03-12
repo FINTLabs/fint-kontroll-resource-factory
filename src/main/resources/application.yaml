@@ -11,13 +11,9 @@ fint:
     application-id: ${fint.application-id}
     default-replicas: 1
   kontroll:
-    user:
-      publishing:
-        initial-delay: 5000
-        initial-delay-elev: 250000
-        fixed-delay: 20000
     resource:
       publishing:
+        initial-delay: 5000
         initial-delay-application-resource-location: 60000
         fixed-delay: 250000
       license-enforcement:
