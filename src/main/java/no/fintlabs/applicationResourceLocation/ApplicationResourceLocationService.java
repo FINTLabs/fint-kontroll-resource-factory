@@ -77,7 +77,7 @@ public class ApplicationResourceLocationService {
                 .builder()
                 .resourceId(resourceId)
                 .resourceName(resourceName)
-                .orgUnitId(orgUnitId)
+                .id(new ApplicationResourceLocationId(null, orgUnitId))
                 .orgUnitName(orgUnitName)
                 .resourceLimit((long) lisenstilgangResource.getLisensantall())
                 .build());

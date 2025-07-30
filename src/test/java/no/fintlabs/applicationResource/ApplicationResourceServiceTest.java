@@ -3,6 +3,7 @@ package no.fintlabs.applicationResource;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocation;
+import no.fintlabs.applicationResourceLocation.ApplicationResourceLocationId;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocationService;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
@@ -83,7 +84,7 @@ class ApplicationResourceServiceTest {
 
         List<ApplicationResourceLocation> applicationResourceLocations = List.of(
                 ApplicationResourceLocation.builder()
-                        .orgUnitId("1")
+                        .id(new ApplicationResourceLocationId(null, "1"))
                         .orgUnitName("Vår fylkeskommune")
                         .resourceLimit(100L)
                         .build()

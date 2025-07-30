@@ -67,7 +67,7 @@ public class ApplicationResourceLocationTest {
         ApplicationResourceLocation applicationResourceLocation = applicationResourceLocations.getFirst();
         assertEquals(m365_systemid, applicationResourceLocation.getResourceId());
         assertEquals(m365_navn, applicationResourceLocation.getResourceName());
-        assertEquals(varfk_systemid, applicationResourceLocation.getOrgUnitId());
+        assertEquals(varfk_systemid, applicationResourceLocation.getId().getOrgUnitId());
         assertEquals(varfk_navn, applicationResourceLocation.getOrgUnitName());
     }
 }
