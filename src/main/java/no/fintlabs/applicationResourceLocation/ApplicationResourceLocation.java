@@ -9,7 +9,6 @@ import lombok.*;
 @EqualsAndHashCode
 @Builder
 public class ApplicationResourceLocation {
-    private Long id;
     private String resourceId;
     private String resourceName;
     private String orgUnitId;
