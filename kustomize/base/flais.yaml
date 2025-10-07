@@ -21,11 +21,11 @@ spec:
       - name: fint.kontroll.resource.license-enforcement.free-student
         value: '5 - list of all license model ids that should be free for students'
       - name: fint.kontroll.resource.valid-roles-for-usertype.student
-        value: '6 - list of all external usertype ids that should be mapped to usertype student'
+        value: '6 - list of all external usertype ids that should be mapped to usertype student. First element should be id for student only external usertype'
       - name: fint.kontroll.resource.valid-roles-for-usertype.employee-staff
-        value: '7 - list of all external usertype ids that should be mapped to usertype employee-staff'
+        value: '7 - list of all external usertype ids that should be mapped to usertype employee-staff. First element should be id for employee-staff only external usertype'
       - name: fint.kontroll.resource.valid-roles-for-usertype.employee-faculty
-        value: '8 - list of all external usertype ids that should be mapped to usertype employee-faculty'
+        value: '8 - list of all external usertype ids that should be mapped to usertype employee-faculty. First element should be id for employee-faculty only external usertype'
       - name: fint.kontroll.resource.valid-roles-for-usertype.all-types
         value: '9 - list of all external usertype ids that should be mapped to usertype all-types'
 

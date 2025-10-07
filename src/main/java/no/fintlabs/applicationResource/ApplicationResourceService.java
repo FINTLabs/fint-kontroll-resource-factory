@@ -58,6 +58,8 @@ public class ApplicationResourceService {
 
     private Optional<ApplicationResource> createApplicationResource(LisensResource lisensResource) {
 
+        log.info("Creating application resource for ({}) {}", lisensResource.getSystemId().getIdentifikatorverdi(), lisensResource.getLisensnavn());
+
         ApplicationResource applicationResource = new ApplicationResource();
 
         applicationResource.setResourceId(lisensResource.getSystemId().getIdentifikatorverdi());
@@ -68,7 +70,7 @@ public class ApplicationResourceService {
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
         //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
-        applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
+        applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(lisensResource, applicationResourceConfiguration));
         //applicationResource.setUserTypes(mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
         //applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));

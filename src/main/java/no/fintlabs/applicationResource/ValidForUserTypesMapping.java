@@ -1,18 +1,26 @@
 package no.fintlabs.applicationResource;
 
+import lombok.extern.slf4j.Slf4j;
+import no.fint.model.resource.Link;
+import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.kodeverk.Brukertype;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ValidForUserTypesMapping {
 
     public static List<String> mapExternalToInternalUserTypes(
-            List<String> validForRoles,
+            LisensResource lisensResource,
             ApplicationResourceConfiguration applicationResourceConfiguration
     ) {
         List<String> userTypes = new ArrayList<>();
+        List<String> validForRoles = getAvailableForUsertypeIds(lisensResource);
+
+        log.info("Map external user types: {} to internal user types for resource {}", validForRoles, lisensResource.getLisensnavn());
 
         if (validForRoles.isEmpty()) {
             userTypes.add(Brukertype.ALLTYPES.name());
@@ -27,18 +35,22 @@ public class ValidForUserTypesMapping {
 
         if (CollectionUtils.containsAny(validForRoles, studentRoles)) {
             userTypes.add(Brukertype.STUDENT.name());
+            log.info("Added {} user type for resource {}",Brukertype.STUDENT.name(), lisensResource.getLisensnavn());
         }
         if (CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)) {
             userTypes.add(Brukertype.EMPLOYEEFACULTY.name());
+            log.info("Added {} user type for resource {}",Brukertype.EMPLOYEEFACULTY.name(), lisensResource.getLisensnavn());
         }
         if (CollectionUtils.containsAny(validForRoles, employeeStaffRoles)) {
             userTypes.add(Brukertype.EMPLOYEESTAFF.name());
+            log.info("Added {} user type for resource {}",Brukertype.EMPLOYEESTAFF.name(), lisensResource.getLisensnavn());
         }
         if (CollectionUtils.containsAny(validForRoles, allTypeRoles) || CollectionUtils.containsAny(validForRoles, studentRoles)
                 && CollectionUtils.containsAny(validForRoles, employeeFacultyRoles)
                 && CollectionUtils.containsAny(validForRoles, employeeStaffRoles)
         ) {
             userTypes.add(Brukertype.ALLTYPES.name());
+            log.info("Added {} user type for resource {}",Brukertype.ALLTYPES.name(), lisensResource.getLisensnavn());
         }
         return userTypes;
     }
@@ -73,5 +85,17 @@ public class ValidForUserTypesMapping {
             return Brukertype.ALLTYPES.name();
         }
         return  null;
+    }
+
+    private static List<String> getAvailableForUsertypeIds(LisensResource lisensResource) {
+
+        if (lisensResource.getTilgjengeligforbrukertype().isEmpty()) {
+            return new ArrayList<>();
+        }
+        return lisensResource.getTilgjengeligforbrukertype()
+                .stream()
+                .map(Link::getHref)
+                .map(href -> StringUtils.substringAfterLast(href,"/"))
+                .toList();
     }
 }
