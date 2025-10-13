@@ -15,7 +15,7 @@ fint:
       publishing:
         initial-delay: 5000
         initial-delay-application-resource-location: 60000
-        fixed-delay: 250000
+        fixed-delay: 3600000
       license-enforcement:
         hard-stop: 1
         floating: 3

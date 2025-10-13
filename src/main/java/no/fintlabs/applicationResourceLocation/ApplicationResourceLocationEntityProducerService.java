@@ -1,6 +1,5 @@
 package no.fintlabs.applicationResourceLocation;
 
-import no.fintlabs.applicationResourceLocation.ApplicationResourceLocation;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.kafka.entity.EntityProducer;
 import no.fintlabs.kafka.entity.EntityProducerFactory;
@@ -16,15 +15,15 @@ public class ApplicationResourceLocationEntityProducerService {
     private final EntityProducer<ApplicationResourceLocation> entityProducer;
     private final EntityTopicNameParameters entityTopicNameParameters;
 
-    private final FintCache<String, ApplicationResourceLocation> ApplicationResourceLocationCache;
+    private final FintCache<String, ApplicationResourceLocation> applicationResourceLocationCache;
 
     public ApplicationResourceLocationEntityProducerService(
             EntityProducerFactory entityProducerFactory,
             EntityTopicService entityTopicService,
-            FintCache<String, ApplicationResourceLocation> ApplicationResourceLocationCache
+            FintCache<String, ApplicationResourceLocation> applicationResourceLocationCache
     ) {
         entityProducer = entityProducerFactory.createProducer(ApplicationResourceLocation.class);
-        this.ApplicationResourceLocationCache = ApplicationResourceLocationCache;
+        this.applicationResourceLocationCache = applicationResourceLocationCache;
         entityTopicNameParameters = EntityTopicNameParameters
                 .builder()
                 .resource("applicationresource-location")
@@ -33,11 +32,11 @@ public class ApplicationResourceLocationEntityProducerService {
     }
 
 
-    public List<ApplicationResourceLocation> publish(List<ApplicationResourceLocation> ApplicationResourceLocations) {
+    public List<ApplicationResourceLocation> publish(List<ApplicationResourceLocation> applicationResourceLocations) {
 
-        return ApplicationResourceLocations
+        return applicationResourceLocations
                 .stream()
-                .filter(resourceLocation -> ApplicationResourceLocationCache
+                .filter(resourceLocation -> applicationResourceLocationCache
                         .getOptional(resourceLocation.getResourceId())
                         .map(publishedResourceLocation -> !resourceLocation.equals(publishedResourceLocation))
                         .orElse(true)
@@ -46,15 +45,16 @@ public class ApplicationResourceLocationEntityProducerService {
                 .toList();
     }
 
-    private void publish(ApplicationResourceLocation ApplicationResourceLocation) {
-        String key = ApplicationResourceLocation.getResourceId();
+    private void publish(ApplicationResourceLocation applicationResourceLocation) {
+        String key = applicationResourceLocation.getResourceId();
         entityProducer.send(
                 EntityProducerRecord.<ApplicationResourceLocation>builder()
                         .topicNameParameters(entityTopicNameParameters)
                         .key(key)
-                        .value(ApplicationResourceLocation)
+                        .value(applicationResourceLocation)
                         .build()
         );
+        applicationResourceLocationCache.put(key, applicationResourceLocation);
     }
 }
 

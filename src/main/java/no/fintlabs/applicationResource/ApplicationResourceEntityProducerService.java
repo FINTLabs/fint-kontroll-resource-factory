@@ -1,5 +1,6 @@
 package no.fintlabs.applicationResource;
 
+import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.cache.FintCache;
 import no.fintlabs.kafka.entity.EntityProducer;
 import no.fintlabs.kafka.entity.EntityProducerFactory;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class ApplicationResourceEntityProducerService {
     private final EntityProducer<ApplicationResource> entityProducer;
@@ -46,6 +48,7 @@ public class ApplicationResourceEntityProducerService {
     }
 
     public void publish(ApplicationResource applicationResource) {
+        log.info("Publishing application resource: {}", applicationResource);
         String key = applicationResource.getResourceId();
         entityProducer.send(
                 EntityProducerRecord.<ApplicationResource>builder()

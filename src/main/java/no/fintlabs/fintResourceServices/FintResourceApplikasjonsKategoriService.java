@@ -33,7 +33,7 @@ public class FintResourceApplikasjonsKategoriService {
        Optional<ApplikasjonResource> optionalApplikasjonResource = applikasjonResourceFintCache.getOptional(applikasjonResourceHref);
 
        if (optionalApplikasjonResource.isEmpty()) {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             list.add("Ingen applikasjonskategori satt");
             return list;
        }
@@ -51,26 +51,4 @@ public class FintResourceApplikasjonsKategoriService {
                .toList();
     }
 
-@Scheduled(initialDelay = 10000, fixedDelay = 50000)
-    public void getAllApplicationCategoriesAndPublish(){
-        Map<String,String> applicationCategories = new HashMap<>();
-        applicationCategories = applikasjonskategoriResourceFintCache.getAllDistinct()
-                .stream()
-                .map(this::getApplicationCategory)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (existing, replacement) -> replacement
-                ));
-        applicationCategoryProduserService.publish(applicationCategories);
-
-
-}
-
-    public Map<String,String> getApplicationCategory(ApplikasjonskategoriResource applikasjonskategoriResource){
-        Map<String,String> applicationCategory = new HashMap<>();
-        applicationCategory.put(applikasjonskategoriResource.getSystemId().getIdentifikatorverdi(), applikasjonskategoriResource.getNavn());
-        return applicationCategory;
-    }
 }
