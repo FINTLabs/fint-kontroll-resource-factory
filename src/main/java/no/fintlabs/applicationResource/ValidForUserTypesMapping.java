@@ -1,11 +1,13 @@
 package no.fintlabs.applicationResource;
 
+import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.kodeverk.Brukertype;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ValidForUserTypesMapping {
 
     public static List<String> mapExternalToInternalUserTypes(
@@ -48,11 +50,15 @@ public class ValidForUserTypesMapping {
             ApplicationResourceConfiguration applicationResourceConfiguration
     ) {
         if (externalRoleUserTypeId.isEmpty()) {
+            log.info("externalRoleUserTypeId is empty");
             return null;
         }
         ApplicationResourceConfiguration.ValidRolesForUsertype validRolesForUsertype = applicationResourceConfiguration.getValidRolesForUsertype();
 
         String studentRole = validRolesForUsertype.getStudent().getFirst();
+        log.info("Student brukertypeid: {}", studentRole);
+        log.info("All brukertype ID for student:");
+       validRolesForUsertype.getStudent().forEach(student -> log.info(studentRole));
 
         if (studentRole!=null && studentRole.equals(externalRoleUserTypeId)) {
             return Brukertype.STUDENT.name();
