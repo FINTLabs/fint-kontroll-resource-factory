@@ -35,4 +35,11 @@ public class FintResourceOrgenhetService {
                 .orElse("");
     }
 
+    public boolean isTopOrgUnit(Link orgUnitLink) {
+        String orgUnitHref = identifikatorNameToLowerCase(orgUnitLink.getHref());
+        String overOrdnetHRef = organisasjonselementResourceFintCache
+                .getOptional(orgUnitHref).get().getOverordnet().getFirst().getHref();
+
+        return overOrdnetHRef.equals(orgUnitHref);
+    }
 }
