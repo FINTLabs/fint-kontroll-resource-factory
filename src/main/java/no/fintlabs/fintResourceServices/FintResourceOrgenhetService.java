@@ -7,6 +7,7 @@ import no.fintlabs.cache.FintCache;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static no.fintlabs.links.ResourceLinkUtil.identifikatorNameToLowerCase;
 
@@ -46,7 +47,11 @@ public class FintResourceOrgenhetService {
             log.warn("Cache size: {}", organisasjonselementResourceFintCache.getAll().size());
             return false;
         }
-
+        log.info("OrgUnit {} found in cache", orgUnitHref);
+        log.info("Links we are comparing: {}",
+                organisasjonselementResource.get().getOverordnet().stream()
+                        .map(link -> identifikatorNameToLowerCase(link.getHref()))
+                        .collect(Collectors.joining(" , ")));
         return organisasjonselementResource.get().getOverordnet().stream().anyMatch(link -> identifikatorNameToLowerCase(link.getHref()).equals(orgUnitHref));
     }
 }
