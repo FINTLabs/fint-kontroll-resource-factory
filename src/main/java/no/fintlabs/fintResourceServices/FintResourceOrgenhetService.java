@@ -49,6 +49,6 @@ public class FintResourceOrgenhetService {
 
         String overOrdnetHRef = organisasjonselementResource.get().getOverordnet().getFirst().getHref();
 
-        return overOrdnetHRef.equals(orgUnitHref);
+        return identifikatorNameToLowerCase(overOrdnetHRef).equals(orgUnitHref);
     }
 }
