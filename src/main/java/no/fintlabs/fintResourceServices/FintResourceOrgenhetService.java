@@ -47,8 +47,6 @@ public class FintResourceOrgenhetService {
             return false;
         }
 
-        String overOrdnetHRef = organisasjonselementResource.get().getOverordnet().getFirst().getHref();
-
-        return identifikatorNameToLowerCase(overOrdnetHRef).equals(orgUnitHref);
+        return organisasjonselementResource.get().getOverordnet().stream().anyMatch(link -> identifikatorNameToLowerCase(link.getHref()).equals(orgUnitHref));
     }
 }
