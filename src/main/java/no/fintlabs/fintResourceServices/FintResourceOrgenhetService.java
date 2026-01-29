@@ -47,11 +47,12 @@ public class FintResourceOrgenhetService {
             log.warn("Cache size: {}", organisasjonselementResourceFintCache.getAll().size());
             return false;
         }
-        log.info("OrgUnit {} found in cache", orgUnitHref);
+        String parentHref =identifikatorNameToLowerCase( organisasjonselementResource.get().getOverordnet().getFirst().getHref());
+        log.info("Parent OrgUnit {} found in cache", parentHref);
         log.info("Links we are comparing: {}",
-                organisasjonselementResource.get().getOverordnet().stream()
+                organisasjonselementResource.get().getSelfLinks().stream()
                         .map(link -> identifikatorNameToLowerCase(link.getHref()))
                         .collect(Collectors.joining(" , ")));
-        return organisasjonselementResource.get().getOverordnet().stream().anyMatch(link -> identifikatorNameToLowerCase(link.getHref()).equals(orgUnitHref));
+        return organisasjonselementResource.get().getSelfLinks().stream().anyMatch(link -> identifikatorNameToLowerCase(link.getHref()).equals(parentHref));
     }
 }
