@@ -27,7 +27,7 @@ public class ResourceLinkUtil {
         return resource.getSelfLinks()
                 .stream()
                 .map(Link::getHref)
-                .map(ResourceLinkUtil::systemIdToLowerCase)
+                .map(ResourceLinkUtil::identifikatorNameToLowerCase)
                 .collect(Collectors.toList());
     }
 
@@ -51,6 +51,7 @@ public class ResourceLinkUtil {
     public static String systemIdToLowerCase(String path) {
         return path.replace("systemId", "systemid");
     }
+
     public static String identifikatorNameToLowerCase(String path) {
         String lowerCasePathWithoutValue = path.substring(0, path.lastIndexOf('/')).toLowerCase();
         String value = path.substring(path.lastIndexOf('/'));
