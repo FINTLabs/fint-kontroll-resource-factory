@@ -6,18 +6,20 @@ import no.fint.model.resource.administrasjon.organisasjon.OrganisasjonselementRe
 import no.fintlabs.cache.FintCache;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static no.fintlabs.links.ResourceLinkUtil.identifikatorNameToLowerCase;
 
 @Service
 @Slf4j
 public class FintResourceOrgenhetService {
-    private final FintCache<String,OrganisasjonselementResource> organisasjonselementResourceFintCache;
+    private final FintCache<String, OrganisasjonselementResource> organisasjonselementResourceFintCache;
 
     public FintResourceOrgenhetService(FintCache<String, OrganisasjonselementResource> organisasjonselementResourceFintCache) {
         this.organisasjonselementResourceFintCache = organisasjonselementResourceFintCache;
     }
 
-    public String getOrgUnitName(Link link){
+    public String getOrgUnitName(Link link) {
         String orgUnitHref = identifikatorNameToLowerCase(link.getHref());
 
         return organisasjonselementResourceFintCache
@@ -26,7 +28,7 @@ public class FintResourceOrgenhetService {
                 .orElse("");
     }
 
-    public String getOrgUnitId(Link link){
+    public String getOrgUnitId(Link link) {
         String orgUnitHref = identifikatorNameToLowerCase(link.getHref());
 
         return organisasjonselementResourceFintCache
@@ -37,8 +39,15 @@ public class FintResourceOrgenhetService {
 
     public boolean isTopOrgUnit(Link orgUnitLink) {
         String orgUnitHref = identifikatorNameToLowerCase(orgUnitLink.getHref());
-        String overOrdnetHRef = organisasjonselementResourceFintCache
-                .getOptional(orgUnitHref).get().getOverordnet().getFirst().getHref();
+        Optional<OrganisasjonselementResource> organisasjonselementResource = organisasjonselementResourceFintCache
+                .getOptional(orgUnitHref);
+        if (organisasjonselementResource.isEmpty()) {
+            log.warn("OrgUnit {} not found in cache", orgUnitHref);
+            log.warn("Cache size: {}", organisasjonselementResourceFintCache.getAll().size());
+            return false;
+        }
+
+        String overOrdnetHRef = organisasjonselementResource.get().getOverordnet().getFirst().getHref();
 
         return overOrdnetHRef.equals(orgUnitHref);
     }
