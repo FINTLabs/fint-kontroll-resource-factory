@@ -15,4 +15,6 @@ public class ApplicationResourceLocation {
     private String orgUnitId;
     private String orgUnitName;
     private Long resourceLimit;
+    private boolean isTopOrgunit;
+
 }
