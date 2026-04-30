@@ -2,35 +2,51 @@ package no.fintlabs.applicationResource;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.cache.FintCache;
-import no.fintlabs.kafka.entity.EntityProducer;
-import no.fintlabs.kafka.entity.EntityProducerFactory;
-import no.fintlabs.kafka.entity.EntityProducerRecord;
-import no.fintlabs.kafka.entity.topic.EntityTopicNameParameters;
-import no.fintlabs.kafka.entity.topic.EntityTopicService;
+import no.novari.kafka.producing.ParameterizedProducerRecord;
+import no.novari.kafka.producing.ParameterizedTemplate;
+import no.novari.kafka.producing.ParameterizedTemplateFactory;
+import no.novari.kafka.topic.EntityTopicService;
+import no.novari.kafka.topic.configuration.EntityCleanupFrequency;
+import no.novari.kafka.topic.configuration.EntityTopicConfiguration;
+import no.novari.kafka.topic.name.EntityTopicNameParameters;
+import no.novari.kafka.topic.name.TopicNamePrefixParameters;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
 @Service
 public class ApplicationResourceEntityProducerService {
-    private final EntityProducer<ApplicationResource> entityProducer;
+    private final ParameterizedTemplate<ApplicationResource> parameterizedTemplate;
     private final EntityTopicNameParameters entityTopicNameParameters;
-
     private final FintCache<String, Integer> publishedApplicationResourceHashCache;
 
     public ApplicationResourceEntityProducerService(
-            EntityProducerFactory entityProducerFactory,
             EntityTopicService entityTopicService,
+            ParameterizedTemplateFactory parameterizedTemplateFactory,
             FintCache<String, Integer> publishedApplicationResourceHashCache
     ) {
-        entityProducer = entityProducerFactory.createProducer(ApplicationResource.class);
+       parameterizedTemplate = parameterizedTemplateFactory.createTemplate(ApplicationResource.class);
         this.publishedApplicationResourceHashCache = publishedApplicationResourceHashCache;
         entityTopicNameParameters = EntityTopicNameParameters
                 .builder()
-                .resource("applicationresource")
+                .topicNamePrefixParameters(
+                        TopicNamePrefixParameters.stepBuilder()
+                                .orgIdApplicationDefault()
+                                .domainContextApplicationDefault()
+                                .build()
+                )
+                .resourceName("applicationresource")
                 .build();
-        entityTopicService.ensureTopic(entityTopicNameParameters, 0);
+        entityTopicService.createOrModifyTopic(entityTopicNameParameters,
+                EntityTopicConfiguration.stepBuilder()
+                        .partitions(1)
+                        .lastValueRetainedForever()
+                        .nullValueRetentionTime(Duration.ofDays(7))
+                        .cleanupFrequency(EntityCleanupFrequency.NORMAL)
+                        .build()
+                );
     }
 
 
@@ -50,8 +66,8 @@ public class ApplicationResourceEntityProducerService {
     public void publish(ApplicationResource applicationResource) {
         log.info("Publishing application resource: {}", applicationResource);
         String key = applicationResource.getResourceId();
-        entityProducer.send(
-                EntityProducerRecord.<ApplicationResource>builder()
+        parameterizedTemplate.send(
+                ParameterizedProducerRecord.<ApplicationResource>builder()
                         .topicNameParameters(entityTopicNameParameters)
                         .key(key)
                         .value(applicationResource)
