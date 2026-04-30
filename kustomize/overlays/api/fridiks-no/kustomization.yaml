@@ -47,6 +47,9 @@ patches:
         path: "/spec/env/9/value"
         value: "df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9"
       - op: replace
+        path: "/spec/env/10/value"
+        value: "fridiks-no"
+      - op: replace
         path: "/spec/kafka/acls/0/topic"
         value: "fridiks-no.kontroll.*"
       - op: replace

@@ -28,6 +28,8 @@ spec:
         value: '8 - list of all external usertype ids that should be mapped to usertype employee-faculty'
       - name: fint.kontroll.resource.valid-roles-for-usertype.all-types
         value: '9 - list of all external usertype ids that should be mapped to usertype all-types'
+      - name: novari.kafka.topic.org-id
+        value: '10 - orgid with - and not .'
 
   kafka:
     enabled: true

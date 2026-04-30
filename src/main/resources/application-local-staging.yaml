@@ -1,21 +1,22 @@
 fint:
   org-id: fintlabs.no
+  application-id: 'fint-kontroll-resource-factory'
   client:
     base-url: http://localhost:3000
-  kafka:
-    default-replicas: 1
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: ${fint.application-id}
-    topic:
-      org-id: ${fint.org-id}
-      domain-context: kontroll
   kontroll:
     user:
       publishing:
         initial-delay: 1000
         initial-delay-elev: 2500
         fixed-delay: 2000
+
+novari:
+  kafka:
+    default-replicas: 1
+    topic:
+      org-id: fintlabs-no
+      domain-context: kontroll
+    application-id: ${fint.application-id}
 
 spring:
   security:
