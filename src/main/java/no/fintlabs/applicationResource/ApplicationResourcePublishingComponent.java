@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -22,8 +24,9 @@ public class ApplicationResourcePublishingComponent {
             fixedDelayString = "${fint.kontroll.resource.publishing.fixed-delay}"
     )
     public void publishApplicationResources() {
+        Date currentTime = Date.from(Instant.now());
 
-        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources();
+        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
         List<ApplicationResource> applicationResourcesPublished = applicationResourceEntityProducerService
                 .publish(applicationResources);
         log.info("ApplicationResources created/published to kafka: " + applicationResources.size() +"/" + applicationResourcesPublished.size());

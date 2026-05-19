@@ -1,6 +1,7 @@
 package no.fintlabs.applicationResource;
 
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Periode;
 import no.fint.model.resource.Link;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocation;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocationService;
@@ -12,11 +13,15 @@ import no.fintlabs.fintResourceServices.FintResourceLisensService;
 import no.fintlabs.fintResourceServices.FintResourceLisensmodelService;
 import no.fintlabs.kodeverk.Brukertype;
 import no.fintlabs.kodeverk.Handhevingstype;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Import;
+
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -43,17 +48,20 @@ class ApplicationResourceServiceTest {
     private FintResourceApplikasjonsKategoriService fintResourceApplikasjonsKategoriService;
     @Mock
     private FintCache<String, LisensResource> lisensResourceFintCache;
+    private Date currentTime = new Date();
+    LisensResource lisensResource = new LisensResource();
 
     @BeforeEach
     public void setUp() {
-        applicationResourceConfiguration = new ApplicationResourceConfiguration(){{
-            setLicenseEnforcement(new ApplicationResourceConfiguration.LicenseEnforcement(){{
+        currentTime = Date.from(Instant.now());
+        applicationResourceConfiguration = new ApplicationResourceConfiguration() {{
+            setLicenseEnforcement(new ApplicationResourceConfiguration.LicenseEnforcement() {{
                 setHardStop(List.of("1"));
             }});
-            setValidRolesForUsertype(new ApplicationResourceConfiguration.ValidRolesForUsertype(){{
-                setStudent(List.of("1","4"));
-                setEmployeeFaculty(List.of("2","4","5"));
-                setEmployeeStaff(List.of("3","5"));
+            setValidRolesForUsertype(new ApplicationResourceConfiguration.ValidRolesForUsertype() {{
+                setStudent(List.of("1", "4"));
+                setEmployeeFaculty(List.of("2", "4", "5"));
+                setEmployeeStaff(List.of("3", "5"));
             }});
         }};
         lisensResourceFintCache = Mockito.mock(FintCache.class);
@@ -62,11 +70,8 @@ class ApplicationResourceServiceTest {
         fintResourceLisensmodelService = Mockito.mock(FintResourceLisensmodelService.class);
         applicationResourceLocationService = Mockito.mock(ApplicationResourceLocationService.class);
         fintResourceApplikasjonsKategoriService = Mockito.mock(FintResourceApplikasjonsKategoriService.class);
-    }
 
-    @Test
-    void getAllApplicationResources() {
-        LisensResource lisensResource = new LisensResource();
+        //LisensResource lisensResource = new LisensResource();
         Identifikator systemId = new Identifikator();
         systemId.setIdentifikatorverdi("systemId1");
         lisensResource.setSystemId(systemId);
@@ -88,6 +93,11 @@ class ApplicationResourceServiceTest {
                         .resourceLimit(100L)
                         .build()
         );
+    }
+
+    @Test
+    void getAllApplicationResourcesWhenGyldighetsPeriodeIsMissingShouldThrowNullPeriodeException() {
+
         applicationResourceService = new ApplicationResourceService(
                 applicationResourceConfiguration,
                 lisensResourceFintCache,
@@ -100,6 +110,45 @@ class ApplicationResourceServiceTest {
                 fintResourceApplikasjonsKategoriService
         );
         given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
+//        given(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource)).willReturn("varfk");
+//        given(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource)).willReturn("Vår fylkeskommune");
+//        given(fintResourceLisensService.getResourceLimit(lisensResource)).willReturn(100L);
+//        given(fintResourceBrukertypeService.getValidForRoleNames(lisensResource)).willReturn(List.of("STUDENT"));
+//        given(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)).willReturn(List.of("4"));
+//        given(fintResourceLisensmodelService.getAccessType(lisensResource)).willReturn("HARDSTOP");
+//        //given(applicationResourceLocationService.getValidForOrgunits(lisensResource)).willReturn(applicationResourceLocations);
+//        given((fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource))).willReturn(List.of("Pedagogisk verktøy"));
+
+//        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
+//
+//        assertEquals(1, applicationResources.size());
+//        assertEquals(Handhevingstype.HARDSTOP.toString(), applicationResources.getFirst().getAccessType());
+//        assertEquals(Set.of(Brukertype.STUDENT.toString(), Brukertype.EMPLOYEEFACULTY.toString()),
+//                Set.copyOf(applicationResources.getFirst().getValidForRoles()));
+
+        assertThrows(GyldighetsperiodeService.NullPeriodeException.class, () -> applicationResourceService.getAllApplicationResources(currentTime));
+    }
+
+    @Test
+    void getAllApplicationResourcesWhenGyldighetsPeriodeIsValidShouldReturnResourceWithStatusActive() {
+
+        Periode gyldighetsperiode = new Periode();
+        gyldighetsperiode.setStart(DateUtils.addDays(currentTime, -3));
+        lisensResource.setGyldighetsperiode(gyldighetsperiode);
+
+        applicationResourceService = new ApplicationResourceService(
+                applicationResourceConfiguration,
+                lisensResourceFintCache,
+                fintResourceLisensService,
+                null,
+                fintResourceBrukertypeService,
+                fintResourceLisensmodelService,
+                applicationResourceLocationService,
+                null,
+                fintResourceApplikasjonsKategoriService
+        );
+
+        given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
         given(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource)).willReturn("varfk");
         given(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource)).willReturn("Vår fylkeskommune");
         given(fintResourceLisensService.getResourceLimit(lisensResource)).willReturn(100L);
@@ -109,12 +158,62 @@ class ApplicationResourceServiceTest {
         //given(applicationResourceLocationService.getValidForOrgunits(lisensResource)).willReturn(applicationResourceLocations);
         given((fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource))).willReturn(List.of("Pedagogisk verktøy"));
 
-        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources();
+        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
 
         assertEquals(1, applicationResources.size());
         assertEquals(Handhevingstype.HARDSTOP.toString(), applicationResources.getFirst().getAccessType());
         assertEquals(Set.of(Brukertype.STUDENT.toString(), Brukertype.EMPLOYEEFACULTY.toString()),
                 Set.copyOf(applicationResources.getFirst().getValidForRoles()));
+        assertEquals("ACTIVE", applicationResources.getFirst().getStatus() );
+    }
+    @Test
+    void getAllApplicationResourcesWhenGyldighetsPeriodeIsFutureShouldReturnResourceWithStatusInActive() {
 
+        Periode gyldighetsperiode = new Periode();
+        gyldighetsperiode.setStart(DateUtils.addDays(currentTime, 3));
+        lisensResource.setGyldighetsperiode(gyldighetsperiode);
+
+        applicationResourceService = new ApplicationResourceService(
+                applicationResourceConfiguration,
+                lisensResourceFintCache,
+                fintResourceLisensService,
+                null,
+                fintResourceBrukertypeService,
+                fintResourceLisensmodelService,
+                applicationResourceLocationService,
+                null,
+                fintResourceApplikasjonsKategoriService
+        );
+
+        given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
+        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
+
+        assertEquals("INACTIVE", applicationResources.getFirst().getStatus());
+    }
+    @Test
+    void getAllApplicationResourcesWhenGyldighetsPeriodeIsPastShouldReturnResourceWithStatusInActive() {
+
+        Periode gyldighetsperiode = new Periode();
+        gyldighetsperiode.setStart(DateUtils.addDays(currentTime, -5));
+        gyldighetsperiode.setSlutt(DateUtils.addDays(currentTime, -1));
+        lisensResource.setGyldighetsperiode(gyldighetsperiode);
+
+        applicationResourceService = new ApplicationResourceService(
+                applicationResourceConfiguration,
+                lisensResourceFintCache,
+                fintResourceLisensService,
+                null,
+                fintResourceBrukertypeService,
+                fintResourceLisensmodelService,
+                applicationResourceLocationService,
+                null,
+                fintResourceApplikasjonsKategoriService
+        );
+
+        given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
+        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
+
+        assertEquals("INACTIVE", applicationResources.getFirst().getStatus());
     }
 }
+

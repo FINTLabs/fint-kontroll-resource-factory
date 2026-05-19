@@ -3,10 +3,12 @@ package no.fintlabs.applicationResource;
 import no.fintlabs.applicationResourceLocation.ApplicationResourceLocationService;
 import no.fintlabs.fintResourceModels.resource.eiendeler.applikasjon.LisensResource;
 import no.fintlabs.fintResourceServices.*;
+import no.fintlabs.utils.PeriodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.cache.FintCache;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +33,8 @@ public class ApplicationResourceService {
                                       FintResourceLisensmodelService fintResourceLisensmodelService,
                                       ApplicationResourceLocationService applicationResourceLocationService,
                                       ApplicationResourceEntityProducerService applicationResourceEntityProducerService,
-                                      FintResourceApplikasjonsKategoriService fintResourceApplikasjonsKategoriService) {
+                                      FintResourceApplikasjonsKategoriService fintResourceApplikasjonsKategoriService
+    ) {
         this.applicationResourceConfiguration = applicationResourceConfiguration;
         this.lisensResourceFintCache = lisensResourceFintCache;
         this.fintResourceLisensService = fintResourceLisensService;
@@ -44,19 +47,20 @@ public class ApplicationResourceService {
     }
 
 
-    public List<ApplicationResource> getAllApplicationResources() {
+    public List<ApplicationResource> getAllApplicationResources(Date currentTime) {
         return lisensResourceFintCache.getAllDistinct()
                 .stream()
                 .filter(lisensResource -> !lisensResource.getLisenstilgang().isEmpty())
                 .filter(lisensResource -> !lisensResource.getApplikasjon().isEmpty())
-                .map(this::createApplicationResource)
+                //.filter(lisensResource -> lisensResource.getGyldighetsperiode() !=null)
+                .map(lisensResource ->createApplicationResource(lisensResource, currentTime))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 //.filter(applicationResource -> ! applicationResource.getApplicationCategory().contains("Pedagogisk verktøy"))
                 .toList();
      }
 
-    private Optional<ApplicationResource> createApplicationResource(LisensResource lisensResource) {
+    private Optional<ApplicationResource> createApplicationResource(LisensResource lisensResource, Date currentTime) {
 
         ApplicationResource applicationResource = new ApplicationResource();
 
@@ -75,8 +79,9 @@ public class ApplicationResourceService {
         // Nye felter 3.18
         //applicationResource.setLicenseModel(fintResourceLisensmodelService.getLicenseModel(lisensResource));
         applicationResource.setLicenseEnforcement(LicenseModelMapping.mapLicenseModelToLicenseEnforcement(lisensResource, applicationResourceConfiguration));
-        applicationResource.setStatus("ACTIVE");
-//        applicationResource.setStatusChanged();
+        //applicationResource.setStatus("ACTIVE");
+        applicationResource.setStatus(PeriodeUtils.getStatus(lisensResource.getGyldighetsperiode(), currentTime));
+        applicationResource.setStatusChanged(PeriodeUtils.getStatusChanged(lisensResource.getGyldighetsperiode(), currentTime));
         return Optional.of(applicationResource);
     }
 }
