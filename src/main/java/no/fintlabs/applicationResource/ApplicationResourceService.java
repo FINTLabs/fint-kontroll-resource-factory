@@ -46,7 +46,6 @@ public class ApplicationResourceService {
         this.fintResourceApplikasjonsKategoriService = fintResourceApplikasjonsKategoriService;
     }
 
-
     public List<ApplicationResource> getAllApplicationResources(Date currentTime) {
         return lisensResourceFintCache.getAllDistinct()
                 .stream()
@@ -64,34 +63,33 @@ public class ApplicationResourceService {
 
         ApplicationResource applicationResource = new ApplicationResource();
 
-        try {
-            applicationResource.setStatus(PeriodeUtils.getStatus(lisensResource.getGyldighetsperiode(), currentTime));
-            applicationResource.setStatusChanged(PeriodeUtils.getStatusChanged(lisensResource.getGyldighetsperiode(), currentTime));
-            applicationResource.setResourceId(lisensResource.getSystemId().getIdentifikatorverdi());
-            applicationResource.setResourceName(lisensResource.getLisensnavn());
-            applicationResource.setResourceType("ApplicationResource");
-            applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
-            applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
-            applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
-            //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
-            applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
-            applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
-            //applicationResource.setUserTypes(mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
-            //applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
-            applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
-            // Nye felter 3.18
-            //applicationResource.setLicenseModel(fintResourceLisensmodelService.getLicenseModel(lisensResource));
-            applicationResource.setLicenseEnforcement(LicenseModelMapping.mapLicenseModelToLicenseEnforcement(lisensResource, applicationResourceConfiguration));
-            //applicationResource.setStatus("ACTIVE");
-        }
-        catch (GyldighetsperiodeService.NullPeriodeException e) {
+        if (lisensResource.getGyldighetsperiode() == null) {
             log.warn("Gyldighetsperiode is null for {} {}. Application resource not created", lisensResource.getLisensnavn(), lisensResource.getSystemId().getIdentifikatorverdi());
             return Optional.empty();
         }
-        catch (GyldighetsperiodeService.NullPeriodeStartDatoException e) {
+        if (lisensResource.getGyldighetsperiode().getStart() == null) {
             log.warn("Gyldighetsperiode start is null for {} {}. Application resource not created", lisensResource.getLisensnavn(), lisensResource.getSystemId().getIdentifikatorverdi());
             return Optional.empty();
         }
+
+        applicationResource.setResourceId(lisensResource.getSystemId().getIdentifikatorverdi());
+        applicationResource.setResourceName(lisensResource.getLisensnavn());
+        applicationResource.setResourceType("ApplicationResource");
+        applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
+        applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
+        applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
+        //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
+        applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
+        applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
+        //applicationResource.setUserTypes(mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
+        //applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
+        applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
+        // Nye felter 3.18
+        //applicationResource.setLicenseModel(fintResourceLisensmodelService.getLicenseModel(lisensResource));
+        applicationResource.setLicenseEnforcement(LicenseModelMapping.mapLicenseModelToLicenseEnforcement(lisensResource, applicationResourceConfiguration));
+        applicationResource.setStatus(PeriodeUtils.getStatus(lisensResource.getGyldighetsperiode(), currentTime));
+        applicationResource.setStatusChanged(PeriodeUtils.getStatusChanged(lisensResource.getGyldighetsperiode(), currentTime));
+
         return Optional.of(applicationResource);
     }
 }
