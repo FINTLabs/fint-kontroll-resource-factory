@@ -14,6 +14,12 @@ public class PeriodeUtils {
     }
 
     public static Date getStatusChanged(Periode gyldighetsperiode, Date currentTime) {
-        return gyldighetsperiodeService.isValid(gyldighetsperiode, currentTime)? gyldighetsperiode.getStart() : gyldighetsperiode.getSlutt();
+        boolean valid = gyldighetsperiodeService.isValid(gyldighetsperiode, currentTime);
+        if (valid) {
+            return gyldighetsperiode.getStart();
+        }
+        return currentTime.before(gyldighetsperiode.getStart())
+                ? gyldighetsperiode.getStart()
+                : gyldighetsperiode.getSlutt();
     }
 }
