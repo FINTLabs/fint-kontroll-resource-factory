@@ -5,8 +5,6 @@ import no.fint.model.felles.kompleksedatatyper.Periode;
 import java.util.Date;
 
 public class PeriodeUtils {
-    //private static final GyldighetsperiodeService gyldighetsperiodeService = new GyldighetsperiodeService();
-
     public static boolean periodeIsValid(Periode gyldighetsperiode, Date currentTime) {
         if (gyldighetsperiode == null) {
             throw new NullPeriodeException();
@@ -14,7 +12,7 @@ public class PeriodeUtils {
         if (gyldighetsperiode.getStart() == null) {
             throw new NullPeriodeStartDatoException();
         }
-        return currentTime.after(gyldighetsperiode.getStart())
+        return !currentTime.before(gyldighetsperiode.getStart())
                 && isEndValid(gyldighetsperiode.getSlutt(), currentTime);
     }
     public static String getStatus(Periode gyldighetsperiode, Date currentTime) {

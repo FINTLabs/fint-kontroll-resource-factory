@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Import;
 
-import javax.validation.constraints.AssertTrue;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -50,7 +49,7 @@ class ApplicationResourceServiceTest {
     @Mock
     private FintCache<String, LisensResource> lisensResourceFintCache;
     private Date currentTime = new Date();
-    LisensResource lisensResource = new LisensResource();
+    private LisensResource lisensResource;
 
     @BeforeEach
     public void setUp() {
@@ -72,7 +71,7 @@ class ApplicationResourceServiceTest {
         applicationResourceLocationService = Mockito.mock(ApplicationResourceLocationService.class);
         fintResourceApplikasjonsKategoriService = Mockito.mock(FintResourceApplikasjonsKategoriService.class);
 
-        //LisensResource lisensResource = new LisensResource();
+        lisensResource = new LisensResource();
         Identifikator systemId = new Identifikator();
         systemId.setIdentifikatorverdi("systemId1");
         lisensResource.setSystemId(systemId);
@@ -199,8 +198,10 @@ class ApplicationResourceServiceTest {
         );
 
         given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
+        given(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)).willReturn(List.of("4"));
         List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
 
+        assertEquals(1, applicationResources.size());
         assertEquals("INACTIVE", applicationResources.getFirst().getStatus());
     }
     @Test
@@ -224,9 +225,10 @@ class ApplicationResourceServiceTest {
         );
 
         given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
+        given(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)).willReturn(List.of("4"));
         List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
 
+        assertEquals(1, applicationResources.size());
         assertEquals("INACTIVE", applicationResources.getFirst().getStatus());
     }
 }
-

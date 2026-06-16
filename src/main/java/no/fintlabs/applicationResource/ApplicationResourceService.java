@@ -51,11 +51,9 @@ public class ApplicationResourceService {
                 .stream()
                 .filter(lisensResource -> !lisensResource.getLisenstilgang().isEmpty())
                 .filter(lisensResource -> !lisensResource.getApplikasjon().isEmpty())
-                //.filter(lisensResource -> lisensResource.getGyldighetsperiode() !=null)
-                .map(lisensResource ->createApplicationResource(lisensResource, currentTime))
+                .map(lisensResource -> createApplicationResource(lisensResource, currentTime))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                //.filter(applicationResource -> ! applicationResource.getApplicationCategory().contains("Pedagogisk verktøy"))
                 .toList();
      }
 
