@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Import;
 
+import javax.validation.constraints.AssertTrue;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -95,8 +96,9 @@ class ApplicationResourceServiceTest {
         );
     }
 
+
     @Test
-    void getAllApplicationResourcesWhenGyldighetsPeriodeIsMissingShouldThrowNullPeriodeException() {
+    void getAllApplicationResourcesWhenGyldighetsPeriodeIsMissingShouldReturnEmptyList() {
 
         applicationResourceService = new ApplicationResourceService(
                 applicationResourceConfiguration,
@@ -110,24 +112,35 @@ class ApplicationResourceServiceTest {
                 fintResourceApplikasjonsKategoriService
         );
         given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
-//        given(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource)).willReturn("varfk");
-//        given(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource)).willReturn("Vår fylkeskommune");
-//        given(fintResourceLisensService.getResourceLimit(lisensResource)).willReturn(100L);
-//        given(fintResourceBrukertypeService.getValidForRoleNames(lisensResource)).willReturn(List.of("STUDENT"));
-//        given(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)).willReturn(List.of("4"));
-//        given(fintResourceLisensmodelService.getAccessType(lisensResource)).willReturn("HARDSTOP");
-//        //given(applicationResourceLocationService.getValidForOrgunits(lisensResource)).willReturn(applicationResourceLocations);
-//        given((fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource))).willReturn(List.of("Pedagogisk verktøy"));
 
-//        List<ApplicationResource> applicationResources = applicationResourceService.getAllApplicationResources(currentTime);
-//
-//        assertEquals(1, applicationResources.size());
-//        assertEquals(Handhevingstype.HARDSTOP.toString(), applicationResources.getFirst().getAccessType());
-//        assertEquals(Set.of(Brukertype.STUDENT.toString(), Brukertype.EMPLOYEEFACULTY.toString()),
-//                Set.copyOf(applicationResources.getFirst().getValidForRoles()));
-
-        assertThrows(GyldighetsperiodeService.NullPeriodeException.class, () -> applicationResourceService.getAllApplicationResources(currentTime));
+        List<ApplicationResource> returnedResources=  applicationResourceService.getAllApplicationResources(currentTime);
+        assertTrue(returnedResources.isEmpty(), "Expected no application resources to be returned when gyldighetsperiode is missing");
     }
+
+    @Test
+    void getAllApplicationResourcesWhenGyldighetsPeriodeStartIsMissingShouldReturnEmptyList () {
+
+        applicationResourceService = new ApplicationResourceService(
+                applicationResourceConfiguration,
+                lisensResourceFintCache,
+                fintResourceLisensService,
+                null,
+                fintResourceBrukertypeService,
+                fintResourceLisensmodelService,
+                applicationResourceLocationService,
+                null,
+                fintResourceApplikasjonsKategoriService
+        );
+
+        Periode gyldighetsperiode = new Periode();
+
+        lisensResource.setGyldighetsperiode(gyldighetsperiode);
+        given(lisensResourceFintCache.getAllDistinct()).willReturn(List.of(lisensResource));
+
+        List<ApplicationResource> returnedResources=  applicationResourceService.getAllApplicationResources(currentTime);
+        assertTrue(returnedResources.isEmpty(), "Expected no application resources to be returned when gyldighetsperiode start is missing");
+    }
+
 
     @Test
     void getAllApplicationResourcesWhenGyldighetsPeriodeIsValidShouldReturnResourceWithStatusActive() {
