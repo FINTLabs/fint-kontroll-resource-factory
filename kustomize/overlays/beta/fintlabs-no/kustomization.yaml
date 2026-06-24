@@ -46,6 +46,9 @@ patches:
       - op: replace
         path: "/spec/env/9/value"
         value: ""
+      - op: replace
+        path: "/spec/env/10/value"
+        value: "fintlabs-no"
 
     target:
       kind: Application

@@ -1,15 +1,9 @@
 fint:
-  org-id: ofk.no
+  org-id: ''
   application-id: fint-kontroll-resource-factory
   cache:
     defaultCacheEntryTimeToLiveMillis: 518400000
     defaultCacheHeapSize: 1000000
-  kafka:
-    topic:
-      org-id: ${fint.org-id}
-      domain-context: kontroll
-    application-id: ${fint.application-id}
-    default-replicas: 1
   kontroll:
     resource:
       publishing:
@@ -27,6 +21,13 @@ fint:
         employee-staff: abe40447ab2f0a18fa00d931,f8bb90c80eefa1a7b8ed8a5e,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9
         employee-faculty: 46b8d74396df230071abc30a,5b13297615105560b150c373,f8bb90c80eefa1a7b8ed8a5e,df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9
         all-types: df359d76c6069854225737cc,169c03dc8d0d7c7566ce0da9
+novari:
+  kafka:
+    topic:
+      org-id: org-id
+      domain-context: kontroll
+    application-id: ${fint.application-id}
+    default-replicas: 1
 spring:
   kafka:
     consumer:

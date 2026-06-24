@@ -27,5 +27,4 @@ public class Lisens implements FintAbstractObject {
     private int enhetskostnad;
     private String beskrivelse;
     private Periode gyldighetsperiode;
-
 }
