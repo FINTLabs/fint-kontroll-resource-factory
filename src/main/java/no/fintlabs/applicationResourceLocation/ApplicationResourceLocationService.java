@@ -63,7 +63,6 @@ public class ApplicationResourceLocationService {
         String orgUnitName = fintResourceOrgenhetService.getOrgUnitName(orgUnitLink);
         String orgUnitId = fintResourceOrgenhetService.getOrgUnitId(orgUnitLink);
         boolean isTopOrgunit = fintResourceOrgenhetService.isTopOrgUnit(orgUnitLink);
-
         if (resourceId == null || resourceId.isEmpty()) {
             log.warn("Creating application resource location failed because application resource could not be found for {}", lisenstilgangResource);
             return Optional.empty();

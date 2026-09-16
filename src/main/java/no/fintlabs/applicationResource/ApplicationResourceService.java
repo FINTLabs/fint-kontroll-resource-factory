@@ -76,17 +76,15 @@ public class ApplicationResourceService {
         applicationResource.setResourceOwnerOrgUnitId(fintResourceLisensService.getResourceOwnerOrgUnitId(lisensResource));
         applicationResource.setResourceOwnerOrgUnitName(fintResourceLisensService.getResourceOwnerOrgUnitName(lisensResource));
         applicationResource.setResourceLimit(fintResourceLisensService.getResourceLimit(lisensResource));
-        //applicationResource.setPlatform(fintResourcePlattformService.getPlatform(lisensResource));
         applicationResource.setAccessType(fintResourceLisensmodelService.getAccessType(lisensResource));
         applicationResource.setValidForRoles(ValidForUserTypesMapping.mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource), applicationResourceConfiguration));
-        //applicationResource.setUserTypes(mapExternalToInternalUserTypes(fintResourceBrukertypeService.getAvailableForUsertypeIds(lisensResource)));
-        //applicationResource.setValidForOrgUnits(applicationResourceLocationService.getValidForOrgunits(lisensResource));
+
         applicationResource.setApplicationCategory(fintResourceApplikasjonsKategoriService.getApplikasjonskategori(lisensResource));
-        // Nye felter 3.18
-        //applicationResource.setLicenseModel(fintResourceLisensmodelService.getLicenseModel(lisensResource));
+
         applicationResource.setLicenseEnforcement(LicenseModelMapping.mapLicenseModelToLicenseEnforcement(lisensResource, applicationResourceConfiguration));
         applicationResource.setStatus(PeriodeUtils.getStatus(lisensResource.getGyldighetsperiode(), currentTime));
-        applicationResource.setStatusChanged(PeriodeUtils.getStatusChanged(lisensResource.getGyldighetsperiode(), currentTime));
+        applicationResource.setValidFrom(lisensResource.getGyldighetsperiode().getStart());
+        applicationResource.setValidTo(lisensResource.getGyldighetsperiode().getStart());
 
         return Optional.of(applicationResource);
     }
